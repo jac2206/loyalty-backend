@@ -4,18 +4,18 @@ import { GenericController } from "../../../controllers/v1/generic.controller";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   const controller = container.resolve<GenericController>("genericController");
-  controller.getGeneric(req, res);
+  return controller.getGeneric(req, res);
 });
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const controller = container.resolve<GenericController>("genericController");
-  controller.postGeneric(req, res);
+  return controller.postGeneric(req, res);
 });
 
-router.patch("/:id", (req, res) => {
+router.patch("/:id", async (req, res) => {
   const controller = container.resolve<GenericController>("genericController");
-  controller.patchGeneric(req, res);
+  return controller.patchGeneric(req, res);
 })
 
 export default router;
