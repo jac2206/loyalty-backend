@@ -10,6 +10,7 @@ export const env = {
   port: process.env.PORT ? Number(process.env.PORT) : 3000,
   showEnv: process.env.SHOW_ENV === "true",
   logLevel: process.env.LOG_LEVEL || "info",
+  jwtSecret: process.env.JWT_SECRET || "secret",
 
   database: {
     host: process.env.DB_HOST,

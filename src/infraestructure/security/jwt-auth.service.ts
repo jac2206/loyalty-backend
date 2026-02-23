@@ -1,0 +1,26 @@
+import jwt from "jsonwebtoken";
+import { IAuthService } from "../../domain/interfaces/services/auth.service.interface";
+import { JwtPayload } from "../../domain/interfaces/security/jwt-payload.interface";
+import { env } from "../../config/env";
+
+export class JwtAuthService implements IAuthService {
+  constructor(){
+    
+  }
+
+  verifyToken(token: string): JwtPayload {
+    const decoded = jwt.verify(
+      token,
+      env.jwtSecret,
+      {
+        algorithms: ["HS256"]
+      }   
+    ) as JwtPayload;
+
+    if (decoded.type !== "access") {
+      throw new Error("Invalid token type");
+    }
+
+    return decoded;
+  }
+}
