@@ -445,3 +445,18 @@ Este chasis permite:
 > El dominio define el negocio.  
 > La aplicación ejecuta acciones.  
 > La infraestructura implementa detalles.
+
+```json
+{
+  "sub": "user-12345",
+  "username": "julian.arango",
+  "client_id": "asdasdasdas",
+  "type": "access",
+  "scopes": [
+    "generic",
+    "company"
+  ],
+  "iss": "auth-service",
+  "aud": "express-ts-chasis"
+}
+```

@@ -3,7 +3,7 @@ import { scopePerRequest } from "awilix-express";
 import { container } from "./config/container";
 import v1Routes from "./infraestructure/http/routes/v1";
 import healthRouters from "./infraestructure/http/routes/health.routes";
-import { errorMiddleware } from "./infraestructure/http/middleware/error.middleware";
+import { errorMiddleware } from "./infraestructure/http/middlewares/error.middleware";
 
 export const createServer = () => {
   const app = express();

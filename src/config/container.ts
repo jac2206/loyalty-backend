@@ -11,6 +11,7 @@ import { GetGenericUseCase } from "../application/use-cases/generic/get-generic.
 import { CreateGenericUseCase } from "../application/use-cases/generic/create-generic.usecase";
 import { UpdateGenericUseCase } from "../application/use-cases/generic/update-generic.usecase";
 import { WinstonLogger } from "../infraestructure/logger/wiston.logger";
+import { JwtAuthService } from "../infraestructure/security/jwt-auth.service";
 
 export const container = createContainer({
   injectionMode: InjectionMode.CLASSIC
@@ -24,6 +25,7 @@ container.register({
 
   // Services
   healthService: asClass(HealthService).singleton(),
+  authService: asClass(JwtAuthService).singleton(),
 
   // Controllers
   healthController: asClass(HealthController).scoped(),
