@@ -11,7 +11,8 @@ function printObject(
     if (
       key.toLowerCase().includes("password") ||
       key.toLowerCase().includes("secret") ||
-      key.toLowerCase().includes("token")
+      key.toLowerCase().includes("token") ||
+      key.toLowerCase().includes("database") 
     ) {
       continue;
     }

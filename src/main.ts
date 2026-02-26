@@ -1,15 +1,36 @@
 import { createServer } from "./server";
 import { env } from "./config/env";
 import { printEnvironmentVariables } from "./util/env-printer";
+import { closeDatabase, connectDatabase } from "./infraestructure/database/postgres";
+import { logger } from "./infraestructure/logger/logger";
 
-const app = createServer();
+async function bootstrap() { 
+  await connectDatabase();
 
-app.listen(env.port, () => {
-  console.log(`🚀 ${env.appName} v${env.appVersion}`);
-  console.log(`🌎 Environment: ${env.nodeEnv}`);
-  console.log(`📡 Running on port ${env.port}`);
+  const app = createServer();
 
-  if (env.showEnv) {
-    printEnvironmentVariables();
-  }
-});
+  const server = app.listen(env.port, () => {
+    console.log(`🚀 ${env.appName} v${env.appVersion}`);
+    console.log(`🌎 Environment: ${env.nodeEnv}`);
+    console.log(`📡 Running on port ${env.port}`);
+
+    if (env.showEnv) {
+      printEnvironmentVariables();
+    }
+  });
+
+  const shutdown = async () => {
+    logger.info("🛑 Shutting down gracefully...");
+
+    server.close(async () => {
+      await closeDatabase();
+      process.exit(0);
+    });
+  };
+
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
+
+}
+
+bootstrap();

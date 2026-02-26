@@ -12,6 +12,8 @@ import { CreateGenericUseCase } from "../application/use-cases/generic/create-ge
 import { UpdateGenericUseCase } from "../application/use-cases/generic/update-generic.usecase";
 import { WinstonLogger } from "../infraestructure/logger/wiston.logger";
 import { JwtAuthService } from "../infraestructure/security/jwt-auth.service";
+import { GenericRepository } from "../infraestructure/database/repositories/generic.repository";
+import { GetXIdGenericUseCase } from "../application/use-cases/generic/getxid-generic.usecase";
 
 export const container = createContainer({
   injectionMode: InjectionMode.CLASSIC
@@ -22,6 +24,7 @@ container.register({
   getGenericUseCase: asClass(GetGenericUseCase).scoped(),
   createGenericUseCase: asClass(CreateGenericUseCase).scoped(),
   updateGenericUseCase: asClass(UpdateGenericUseCase).scoped(),
+  getXIdGenericUseCase: asClass(GetXIdGenericUseCase).scoped(),
 
   // Services
   healthService: asClass(HealthService).singleton(),
@@ -36,4 +39,8 @@ container.register({
 
 container.register({
   logger: asClass(WinstonLogger).singleton()
+});
+
+container.register({
+  genericRepository: asClass(GenericRepository).scoped()
 });

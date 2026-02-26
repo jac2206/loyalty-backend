@@ -18,6 +18,11 @@ router.post("/", async (req, res) => {
   return controller.postGeneric(req, res);
 });
 
+router.get("/:id", async (req, res) => {
+  const controller = container.resolve<GenericController>("genericController");
+  return controller.getXIdGeneric(req, res);
+})
+
 router.patch("/:id", async (req, res) => {
   const controller = container.resolve<GenericController>("genericController");
   return controller.patchGeneric(req, res);
