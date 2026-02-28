@@ -6,6 +6,7 @@ import { IUpdateGenericUseCase } from "../../../domain/interfaces/use-cases/gene
 import { IGetXIdGenericUseCase } from "../../../domain/interfaces/use-cases/generic/getxid-generic.usecase.interface";
 import { UpdateGenericResponseUseCaseDto } from "../../../application/dto/update-generic.dto";
 import { IGetPokemonXNameUseCase } from "../../../domain/interfaces/use-cases/generic/get-pokemonxname.usecase.interface";
+import { PokemonResponseDto} from "../../../application/dto/pokemon.dto"
 
 export class GenericController {
   constructor(
