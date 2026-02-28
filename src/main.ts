@@ -5,14 +5,22 @@ import { closeDatabase, connectDatabase } from "./infraestructure/database/postg
 import { logger } from "./infraestructure/logger/logger";
 
 async function bootstrap() { 
-  await connectDatabase();
 
   const app = createServer();
 
-  const server = app.listen(env.port, () => {
+  const port = env.port;
+
+  const server = app.listen(port, async () => {
     console.log(`🚀 ${env.appName} v${env.appVersion}`);
     console.log(`🌎 Environment: ${env.nodeEnv}`);
-    console.log(`📡 Running on port ${env.port}`);
+    console.log(`📡 Running on port ${port}`);
+
+    try {
+      await connectDatabase();
+      console.log("✅ Database connected");
+    } catch (error) {
+      console.error("❌ Database connection failed");
+    }
 
     if (env.showEnv) {
       printEnvironmentVariables();
@@ -30,7 +38,6 @@ async function bootstrap() {
 
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
-
 }
 
 bootstrap();
