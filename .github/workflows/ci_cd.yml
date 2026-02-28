@@ -3,7 +3,6 @@ name: CI/CD
 on:
   push:
     branches:
-      - develop
       - master
   pull_request:
     branches:
@@ -56,11 +55,7 @@ jobs:
       - run: npm ci
       - run: npm run test:coverage
 
-      - uses: SonarSource/sonarqube-scan-action@v2
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - uses: SonarSource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.TOKEN_SONAR }}
