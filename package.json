@@ -1,5 +1,5 @@
 {
-  "name": "chasis-express-ts",
+  "name": "loyalty-backend",
   "version": "1.0.0",
   "scripts": {
     "dev": "tsx watch src/main.ts",
