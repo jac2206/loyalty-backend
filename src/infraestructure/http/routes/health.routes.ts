@@ -4,7 +4,7 @@ import { HealthController } from "../../controllers/health.controller";
 
 const router = Router();
 
-router.get("/health", async (req, res) => {
+router.get("/", async (req, res) => {
   const controller = container.resolve<HealthController>("healthController");
   return controller.getHealth(req, res);
 });

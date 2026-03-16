@@ -4,17 +4,31 @@ import { JwtPayload } from "../../domain/interfaces/security/jwt-payload.interfa
 import { env } from "../../config/env";
 
 export class JwtAuthService implements IAuthService {
-  constructor(){
-    
+
+  constructor(){}
+
+  generateToken(payload: JwtPayload): string {
+
+    const token = jwt.sign(
+      payload,
+      env.jwtSecret,
+      {
+        algorithm: "HS256",
+        expiresIn: "1h"
+      }
+    );
+
+    return token;
   }
 
   verifyToken(token: string): JwtPayload {
+
     const decoded = jwt.verify(
       token,
       env.jwtSecret,
       {
         algorithms: ["HS256"]
-      }   
+      }
     ) as JwtPayload;
 
     if (decoded.type !== "access") {

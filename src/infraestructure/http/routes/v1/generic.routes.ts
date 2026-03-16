@@ -8,7 +8,7 @@ const router = Router();
 
 router.get("/", 
   authenticateJWT,
-  authorizeScopes(["generic"]),
+  authorizeScopes(["generic", "user"]),
   async (req, res) => {
   const controller = container.resolve<GenericController>("genericController");
   return controller.getGeneric(req, res);

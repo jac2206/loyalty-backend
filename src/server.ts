@@ -6,14 +6,17 @@ import healthRouters from "./infraestructure/http/routes/health.routes";
 import { errorMiddleware } from "./infraestructure/http/middlewares/error.middleware";
 
 export const createServer = () => {
+
+  const prefix = "/loyalty";
+
   const app = express();
 
   app.use(express.json());
 
   app.use(scopePerRequest(container));
 
-  app.use("/", healthRouters);
-  app.use("/v1", v1Routes);
+  app.use(`${prefix}/health`, healthRouters);
+  app.use(`${prefix}/v1`, v1Routes);
 
   app.use((req, res) => {
     res.status(404).json({
