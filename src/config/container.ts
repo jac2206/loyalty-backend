@@ -30,6 +30,7 @@ import { TransactionsController } from "../infraestructure/controllers/v1/transa
 import { TransactionRepository } from "../infraestructure/database/repositories/transaction.repository";
 import { AccumulatePointsUseCase } from "../application/use-cases/transactions/accumulate-points.usecase";
 import { RedeemPointsUseCase } from "../application/use-cases/transactions/redeem-points.usecase";
+import { GetAllUsersUseCase } from "../application/use-cases/users/get-all-users.usecase";
 
 export const container = createContainer({
   injectionMode: InjectionMode.CLASSIC
@@ -49,6 +50,7 @@ container.register({
   getTransactionsUseCase: asClass(GetTransactionsUseCase).scoped(),
   accumulatePointsUseCase: asClass(AccumulatePointsUseCase).scoped(),
   redeemPointsUseCase: asClass(RedeemPointsUseCase).scoped(),
+  getAllUsersUseCase: asClass(GetAllUsersUseCase).scoped(),
 
   // Services
   healthService: asClass(HealthService).singleton(),
