@@ -84,4 +84,34 @@ export class UserRepository implements IUserRepository {
         row.status
     );
   }
+
+  async findAll(): Promise<User[]> {
+
+    const result = await pool.query(`
+      SELECT 
+        document_type,
+        document_number,
+        full_name,
+        email,
+        phone,
+        password_hash,
+        has_pin,
+        status
+      FROM loyalty.users
+    `)
+
+    return result.rows.map(row =>
+      new User(
+        row.document_type,
+        row.document_number,
+        row.full_name,
+        row.email,
+        row.phone,
+        row.password_hash,
+        row.has_pin,
+        row.status
+      )
+    )
+  }
+
 }

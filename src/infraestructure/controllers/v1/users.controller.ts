@@ -8,14 +8,26 @@ import { GetMeResponseDTO } from "../../../application/dto/me-user.dto";
 import { IRegisterUserUseCase } from "../../../domain/interfaces/use-cases/users/register-user.usecase.interface";
 import { ILoginUserUseCase } from "../../../domain/interfaces/use-cases/users/login-user.usecase.interface";
 import { IGetMeUseCase } from "../../../domain/interfaces/use-cases/users/get-me.usecase.interface";
+import { GetUsersResponseDTO } from "../../../application/dto/get-users.dto";
+import { IGetAllUsersUseCase } from "../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface";
 
 export class UsersController {
 
   constructor(
     private readonly registerUserUseCase: IRegisterUserUseCase ,
     private readonly loginUserUseCase: ILoginUserUseCase,
-    private readonly getMeUseCase: IGetMeUseCase
+    private readonly getMeUseCase: IGetMeUseCase,
+    private readonly getAllUsersUseCase: IGetAllUsersUseCase
   ) {}
+
+  getUsers = async (
+    req: Request, 
+    res: Response<GetUsersResponseDTO[]>
+  ): Promise<void> => {
+    // const userId = (req as any).user.sub;
+    const result = await this.getAllUsersUseCase.execute();
+    res.status(200).json(result);
+  };
 
   register = async (
     req: Request,
