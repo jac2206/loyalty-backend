@@ -6,6 +6,7 @@ import healthRouters from "./infraestructure/http/routes/health.routes";
 import { errorMiddleware } from "./infraestructure/http/middlewares/error.middleware";
 import swaggerUi from "swagger-ui-express"
 import { generateSwagger } from "./infraestructure/docs/swagger"
+import cors from "cors";
 
 export const createServer = () => {
 
@@ -29,6 +30,21 @@ export const createServer = () => {
   const prefix = "/loyalty";
 
   const app = express();
+
+  app.use(cors({
+    origin: (origin, callback) => {
+      const allowed = ["http://localhost:3000", "http://localhost:4002"];
+
+      if (!origin) return callback(null, true);
+
+      if (allowed.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true
+  }));
 
   app.use(express.json());
 
