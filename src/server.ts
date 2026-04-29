@@ -33,7 +33,7 @@ export const createServer = () => {
 
   app.use(cors({
     origin: (origin, callback) => {
-      const allowed = ["http://localhost:3000", "http://localhost:4002"];
+      const allowed = ["http://localhost:3000", "http://localhost:4002", "https://loyalty-web-mocha.vercel.app"];
 
       if (!origin) return callback(null, true);
 
