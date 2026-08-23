@@ -1,6 +1,6 @@
-import { GenericResponseDto } from "./get-generic.dto";
+import { GenericResponseDto } from './get-generic.dto';
 
 export interface UpdateGenericResponseUseCaseDto {
-    message: string,
-    result: GenericResponseDto,
+  message: string;
+  result: GenericResponseDto;
 }

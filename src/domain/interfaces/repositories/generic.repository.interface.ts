@@ -1,4 +1,4 @@
-import { Generic } from "../../entities/generic.entity";
+import { Generic } from '../../entities/generic.entity';
 
 export interface IGenericRepository {
   save(entity: Generic): Promise<Generic>;

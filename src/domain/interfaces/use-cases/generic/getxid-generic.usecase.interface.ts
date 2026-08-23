@@ -1,5 +1,5 @@
-import { Generic } from "../../../entities/generic.entity";
+import { Generic } from '../../../entities/generic.entity';
 
-export interface IGetXIdGenericUseCase{
-    execute(id:string):Promise<Generic | null>
+export interface IGetXIdGenericUseCase {
+  execute(id: string): Promise<Generic | null>;
 }

@@ -1,111 +1,107 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { GetXIdGenericUseCase } from "../../../../src/application/use-cases/generic/getxid-generic.usecase";
-import { IGenericRepository } from "../../../../src/domain/interfaces/repositories/generic.repository.interface";
-import { Generic } from "../../../../src/domain/entities/generic.entity";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { GetXIdGenericUseCase } from '../../../../src/application/use-cases/generic/getxid-generic.usecase';
+import { IGenericRepository } from '../../../../src/domain/interfaces/repositories/generic.repository.interface';
+import { Generic } from '../../../../src/domain/entities/generic.entity';
 
-describe("GetXIdGenericUseCase", () => {
+describe('GetXIdGenericUseCase', () => {
+  let genericRepositoryMock: IGenericRepository;
+  let useCase: GetXIdGenericUseCase;
 
-    let genericRepositoryMock: IGenericRepository;
-    let useCase: GetXIdGenericUseCase;
+  beforeEach(() => {
+    // ============================
+    // MOCK del Repository
+    // ============================
+    genericRepositoryMock = {
+      findById: vi.fn(),
+    } as unknown as IGenericRepository;
 
-    beforeEach(() => {
-        // ============================
-        // MOCK del Repository
-        // ============================
-        genericRepositoryMock = {
-            findById: vi.fn(),
-        } as unknown as IGenericRepository;
+    useCase = new GetXIdGenericUseCase(genericRepositoryMock);
+  });
 
-        useCase = new GetXIdGenericUseCase(genericRepositoryMock);
-    });
+  it('should return a Generic entity when it exists', async () => {
+    // ============================
+    // AAA - ARRANGE
+    // ============================
+    const fakeId = '123';
 
-    it("should return a Generic entity when it exists", async () => {
+    const fakeGeneric: Generic = {
+      name: 'Julian',
+      lastName: 'Arango',
+      age: 32,
+    } as Generic;
 
-        // ============================
-        // AAA - ARRANGE
-        // ============================
-        const fakeId = "123";
+    // MOCK
+    // Cuando llamen findById devuelva fakeGeneric
+    (genericRepositoryMock.findById as any).mockResolvedValue(fakeGeneric);
 
-        const fakeGeneric: Generic = {
-            name: "Julian",
-            lastName: "Arango",
-            age: 32
-        } as Generic;
+    // ============================
+    // AAA - ACT
+    // ============================
+    const result = await useCase.execute(fakeId);
 
-        // MOCK
-        // Cuando llamen findById devuelva fakeGeneric
-        (genericRepositoryMock.findById as any).mockResolvedValue(fakeGeneric);
+    // ============================
+    // AAA - ASSERT
+    // ============================
 
-        // ============================
-        // AAA - ACT
-        // ============================
-        const result = await useCase.execute(fakeId);
+    //Verifica que el método fue llamado
+    expect(genericRepositoryMock.findById).toHaveBeenCalled();
 
-        // ============================
-        // AAA - ASSERT
-        // ============================
+    //Verifica que fue llamado con el id correcto
+    expect(genericRepositoryMock.findById).toHaveBeenCalledWith(fakeId);
 
-        //Verifica que el método fue llamado
-        expect(genericRepositoryMock.findById).toHaveBeenCalled();
+    //Verifica que fue llamado una sola vez
+    expect(genericRepositoryMock.findById).toHaveBeenCalledTimes(1);
 
-        //Verifica que fue llamado con el id correcto
-        expect(genericRepositoryMock.findById).toHaveBeenCalledWith(fakeId);
+    //Verifica que retorna la entidad
+    expect(result).toEqual(fakeGeneric);
+  });
 
-        //Verifica que fue llamado una sola vez
-        expect(genericRepositoryMock.findById).toHaveBeenCalledTimes(1);
+  it('should return null when entity does not exist', async () => {
+    // ============================
+    //AAA - ARRANGE
+    // ============================
+    const fakeId = '999';
 
-        //Verifica que retorna la entidad
-        expect(result).toEqual(fakeGeneric);
-    });
+    //MOCK
+    (genericRepositoryMock.findById as any).mockResolvedValue(null);
 
-    it("should return null when entity does not exist", async () => {
+    // ============================
+    //AAA - ACT
+    // ============================
+    const result = await useCase.execute(fakeId);
 
-        // ============================
-        //AAA - ARRANGE
-        // ============================
-        const fakeId = "999";
+    // ============================
+    //AAA - ASSERT
+    // ============================
 
-        //MOCK
-        (genericRepositoryMock.findById as any).mockResolvedValue(null);
+    //Se llamó correctamente
+    expect(genericRepositoryMock.findById).toHaveBeenCalledWith(fakeId);
 
-        // ============================
-        //AAA - ACT
-        // ============================
-        const result = await useCase.execute(fakeId);
+    //Retorna null
+    expect(result).toBeNull();
+  });
 
-        // ============================
-        //AAA - ASSERT
-        // ============================
+  it('should call repository exactly once (SPY example)', async () => {
+    // ============================
+    // AAA - ARRANGE
+    // ============================
+    const fakeId = 'abc';
 
-        //Se llamó correctamente
-        expect(genericRepositoryMock.findById).toHaveBeenCalledWith(fakeId);
+    (genericRepositoryMock.findById as any).mockResolvedValue(null);
 
-        //Retorna null
-        expect(result).toBeNull();
-    });
+    //SPY
+    const spy = vi.spyOn(genericRepositoryMock, 'findById');
 
-    it("should call repository exactly once (SPY example)", async () => {
+    // ============================
+    //AAA - ACT
+    // ============================
+    await useCase.execute(fakeId);
 
-        // ============================
-        // AAA - ARRANGE
-        // ============================
-        const fakeId = "abc";
+    // ============================
+    // AAA - ASSERT
+    // ============================
 
-        (genericRepositoryMock.findById as any).mockResolvedValue(null);
-
-        //SPY
-        const spy = vi.spyOn(genericRepositoryMock, "findById");
-
-        // ============================
-        //AAA - ACT
-        // ============================
-        await useCase.execute(fakeId);
-
-        // ============================
-        // AAA - ASSERT
-        // ============================
-
-        //Verifica que el spy detectó la llamada
-        expect(spy).toHaveBeenCalledTimes(1);
-    });
+    //Verifica que el spy detectó la llamada
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });

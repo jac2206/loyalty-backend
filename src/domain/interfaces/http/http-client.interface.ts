@@ -1,5 +1,5 @@
 export interface HttpRequestOptions {
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   path: string;
   pathParams?: Record<string, string | number>;
   queryParams?: Record<string, string | number>;
