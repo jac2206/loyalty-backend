@@ -1,36 +1,38 @@
-import { Router } from "express";
-import { container } from "../../../../config/container";
-import { GenericController } from "../../../controllers/v1/generic.controller";
-import { authenticateJWT } from "../../middlewares/auth.middleware";
-import { authorizeScopes } from "../../middlewares/scope.middleware";
+import { Router } from 'express';
+import { container } from '../../../../config/container';
+import { GenericController } from '../../../controllers/v1/generic.controller';
+import { authenticateJWT } from '../../middlewares/auth.middleware';
+import { authorizeScopes } from '../../middlewares/scope.middleware';
 
 const router = Router();
 
-router.get("/", 
+router.get(
+  '/',
   authenticateJWT,
-  authorizeScopes(["generic", "user"]),
+  authorizeScopes(['generic', 'user']),
   async (req, res) => {
-  const controller = container.resolve<GenericController>("genericController");
-  return controller.getGeneric(req, res);
-});
-router.post("/", async (req, res) => {
-  const controller = container.resolve<GenericController>("genericController");
+    const controller = container.resolve<GenericController>('genericController');
+    return controller.getGeneric(req, res);
+  },
+);
+router.post('/', async (req, res) => {
+  const controller = container.resolve<GenericController>('genericController');
   return controller.postGeneric(req, res);
 });
 
-router.get("/:id", async (req, res) => {
-  const controller = container.resolve<GenericController>("genericController");
+router.get('/:id', async (req, res) => {
+  const controller = container.resolve<GenericController>('genericController');
   return controller.getXIdGeneric(req, res);
-})
+});
 
-router.get("/pokemon/:name", async (req, res) => {
-  const controller = container.resolve<GenericController>("genericController");
+router.get('/pokemon/:name', async (req, res) => {
+  const controller = container.resolve<GenericController>('genericController');
   return controller.getPokemonXName(req, res);
-})
+});
 
-router.patch("/:id", async (req, res) => {
-  const controller = container.resolve<GenericController>("genericController");
+router.patch('/:id', async (req, res) => {
+  const controller = container.resolve<GenericController>('genericController');
   return controller.patchGeneric(req, res);
-})
+});
 
 export default router;

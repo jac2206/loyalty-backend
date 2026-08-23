@@ -1,15 +1,13 @@
-import { pool } from "../../database/postgres"
-import { Transaction } from "../../../domain/entities/transaction.entity"
-import { ITransactionRepository } from "../../../domain/interfaces/repositories/transaction.repository.interface"
+import { pool } from '../../database/postgres';
+import { Transaction } from '../../../domain/entities/transaction.entity';
+import { ITransactionRepository } from '../../../domain/interfaces/repositories/transaction.repository.interface';
 
 export class TransactionRepository implements ITransactionRepository {
-
   async findByUser(
     documentType: string,
     documentNumber: string,
-    type?: string
+    type?: string,
   ): Promise<Transaction[]> {
-
     let query = `
     SELECT
       t.id,
@@ -28,32 +26,32 @@ export class TransactionRepository implements ITransactionRepository {
       AND u.document_number = $2
     `;
 
-    const params: any[] = [documentType, documentNumber]
+    const params: any[] = [documentType, documentNumber];
 
     if (type) {
-      query += " AND t.type = $3"
-      params.push(type)
-    };
+      query += ' AND t.type = $3';
+      params.push(type);
+    }
 
     const result = await pool.query(query, params);
-    
-    return result.rows.map(row =>
-      new Transaction(
-        row.id,
-        row.account_id,
-        row.partner_code,
-        row.location_code,
-        row.type,
-        row.points,
-        row.money_amount,
-        row.reference,
-        row.created_at
-      )
-    )
-  };
+
+    return result.rows.map(
+      (row) =>
+        new Transaction(
+          row.id,
+          row.account_id,
+          row.partner_code,
+          row.location_code,
+          row.type,
+          row.points,
+          row.money_amount,
+          row.reference,
+          row.created_at,
+        ),
+    );
+  }
 
   async save(transaction: Transaction): Promise<void> {
-
     const data = transaction.toPersistence();
 
     await pool.query(
@@ -67,11 +65,8 @@ export class TransactionRepository implements ITransactionRepository {
         data.type,
         data.points,
         data.amount,
-        data.reference
-      ]
+        data.reference,
+      ],
     );
-
-  };
-
-
+  }
 }

@@ -1,5 +1,8 @@
-import {GenericRequestDto, GenericResponseDto} from '../../../../application/dto/get-generic.dto'
+import {
+  GenericRequestDto,
+  GenericResponseDto,
+} from '../../../../application/dto/get-generic.dto';
 
-export interface ICreateGenericUseCase{
-    execute(genericRequest: GenericRequestDto): Promise<GenericResponseDto>
+export interface ICreateGenericUseCase {
+  execute(genericRequest: GenericRequestDto): Promise<GenericResponseDto>;
 }

@@ -1,4 +1,4 @@
-import { AwilixContainer } from "awilix";
+import { AwilixContainer } from 'awilix';
 
 declare global {
   namespace Express {
