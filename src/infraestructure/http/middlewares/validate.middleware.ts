@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { ZodSchema } from 'zod';
+import { Request, Response, NextFunction } from "express";
+import { ZodSchema } from "zod";
 
 type Schema = {
   body?: ZodSchema<any>;
@@ -13,8 +13,8 @@ export const validate = (schema: Schema) => {
       const result = schema.body.safeParse(req.body);
       if (!result.success) {
         return res.status(422).json({
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid body',
+          code: "VALIDATION_ERROR",
+          message: "Invalid body",
           errors: result.error.issues,
         });
       }
@@ -25,8 +25,8 @@ export const validate = (schema: Schema) => {
       const result = schema.params.safeParse(req.params);
       if (!result.success) {
         return res.status(422).json({
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid params',
+          code: "VALIDATION_ERROR",
+          message: "Invalid params",
           errors: result.error.issues,
         });
       }
@@ -37,8 +37,8 @@ export const validate = (schema: Schema) => {
       const result = schema.query.safeParse(req.query);
       if (!result.success) {
         return res.status(422).json({
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid query',
+          code: "VALIDATION_ERROR",
+          message: "Invalid query",
           errors: result.error.issues,
         });
       }

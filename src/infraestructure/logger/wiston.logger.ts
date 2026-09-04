@@ -1,5 +1,5 @@
-import { ILogger } from '../../domain/interfaces/logger.interface';
-import { logger } from './logger';
+import { ILogger } from "../../domain/interfaces/logger.interface";
+import { logger } from "./logger";
 
 export class WinstonLogger implements ILogger {
   info(context: string, message: string, meta?: unknown): void {

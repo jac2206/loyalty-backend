@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { UpdateGenericUseCase } from '../../../../src/application/use-cases/generic/update-generic.usecase';
-import { DomainException } from '../../../../src/domain/exceptions/domain.exception';
-import { DomainErrors } from '../../../../src/domain/errors/domain-errors';
-import { ILogger } from '../../../../src/domain/interfaces/logger.interface';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { UpdateGenericUseCase } from "../../../../src/application/use-cases/generic/update-generic.usecase";
+import { DomainException } from "../../../../src/domain/exceptions/domain.exception";
+import { DomainErrors } from "../../../../src/domain/errors/domain-errors";
+import { ILogger } from "../../../../src/domain/interfaces/logger.interface";
 
-describe('UpdateGenericUseCase', () => {
+describe("UpdateGenericUseCase", () => {
   let loggerMock: ILogger;
   let useCase: UpdateGenericUseCase;
 
@@ -20,12 +20,12 @@ describe('UpdateGenericUseCase', () => {
     useCase = new UpdateGenericUseCase(loggerMock);
   });
 
-  it('should update generic successfully and return data with id', async () => {
-    const id = '123';
+  it("should update generic successfully and return data with id", async () => {
+    const id = "123";
 
     const request = {
-      name: 'Julian',
-      lastName: 'Arango',
+      name: "Julian",
+      lastName: "Arango",
       age: 32,
     };
 
@@ -39,9 +39,9 @@ describe('UpdateGenericUseCase', () => {
     // ============================
 
     expect(result).toEqual({
-      id: '123',
-      name: 'Julian',
-      lastName: 'Arango',
+      id: "123",
+      name: "Julian",
+      lastName: "Arango",
       age: 32,
     });
 
@@ -50,8 +50,8 @@ describe('UpdateGenericUseCase', () => {
 
     // Logger fue llamado con parámetros correctos
     expect(loggerMock.info).toHaveBeenCalledWith(
-      'CreateGenericUseCase',
-      'Starting create generic',
+      "CreateGenericUseCase",
+      "Starting create generic",
       request,
     );
 
@@ -59,13 +59,13 @@ describe('UpdateGenericUseCase', () => {
     expect(loggerMock.info).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw DomainException when id is missing', async () => {
+  it("should throw DomainException when id is missing", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
     const request = {
-      name: 'Julian',
-      lastName: 'Arango',
+      name: "Julian",
+      lastName: "Arango",
       age: 32,
     };
 
@@ -75,10 +75,10 @@ describe('UpdateGenericUseCase', () => {
     // AAA - ACT & ASSERT
     // ============================
 
-    await expect(useCase.execute(request, '')).rejects.toBeInstanceOf(DomainException);
+    await expect(useCase.execute(request, "")).rejects.toBeInstanceOf(DomainException);
 
     try {
-      await useCase.execute(request, '');
+      await useCase.execute(request, "");
     } catch (error: any) {
       // ============================
       // AAA - ASSERT
@@ -90,15 +90,15 @@ describe('UpdateGenericUseCase', () => {
     }
   });
 
-  it('should throw DomainException when name is invalid', async () => {
+  it("should throw DomainException when name is invalid", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const id = '123';
+    const id = "123";
 
     const request = {
-      name: 'Jo', // menos de 3 caracteres
-      lastName: 'Arango',
+      name: "Jo", // menos de 3 caracteres
+      lastName: "Arango",
       age: 32,
     };
 
@@ -123,16 +123,16 @@ describe('UpdateGenericUseCase', () => {
     }
   });
 
-  it('should call logger once (SPY example)', async () => {
+  it("should call logger once (SPY example)", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const spy = vi.spyOn(loggerMock, 'info');
+    const spy = vi.spyOn(loggerMock, "info");
 
-    const id = '123';
+    const id = "123";
     const request = {
-      name: 'Julian',
-      lastName: 'Arango',
+      name: "Julian",
+      lastName: "Arango",
       age: 32,
     };
 

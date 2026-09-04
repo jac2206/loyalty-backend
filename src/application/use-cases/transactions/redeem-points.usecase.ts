@@ -1,13 +1,13 @@
-import { IRedeemPointsUseCase } from '../../../domain/interfaces/use-cases/transactions/redeem-points.usecase.interface';
+import { IRedeemPointsUseCase } from "../../../domain/interfaces/use-cases/transactions/redeem-points.usecase.interface";
 import {
   RedeemPointsRequestDTO,
   RedeemPointsResponseDTO,
-} from '../../dto//redeem-points.dto';
-import { ITransactionRepository } from '../../../domain/interfaces/repositories/transaction.repository.interface';
-import { IAccountRepository } from '../../../domain/interfaces/repositories/account.repository.interface';
-import { Transaction } from '../../../domain/entities/transaction.entity';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
+} from "../../dto//redeem-points.dto";
+import { ITransactionRepository } from "../../../domain/interfaces/repositories/transaction.repository.interface";
+import { IAccountRepository } from "../../../domain/interfaces/repositories/account.repository.interface";
+import { Transaction } from "../../../domain/entities/transaction.entity";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
 
 export class RedeemPointsUseCase implements IRedeemPointsUseCase {
   constructor(
@@ -45,7 +45,7 @@ export class RedeemPointsUseCase implements IRedeemPointsUseCase {
       accountId,
       request.partnerCode,
       request.locationCode ?? null,
-      'REDEM',
+      "REDEM",
       request.points,
       amount,
       request.reference,
@@ -59,7 +59,7 @@ export class RedeemPointsUseCase implements IRedeemPointsUseCase {
     );
 
     const result: RedeemPointsResponseDTO = {
-      message: 'Points redeemed successfully',
+      message: "Points redeemed successfully",
       pointsRedeemed: request.points,
       balance: newBalance,
     };

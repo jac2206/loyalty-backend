@@ -1,8 +1,8 @@
-import { IUpdateGenericUseCase } from '../../../domain/interfaces/use-cases/generic/update-generic.usecase.interface';
-import { GenericRequestDto, GenericResponseDto } from '../../dto/get-generic.dto';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
-import { ILogger } from '../../../domain/interfaces/logger.interface';
+import { IUpdateGenericUseCase } from "../../../domain/interfaces/use-cases/generic/update-generic.usecase.interface";
+import { GenericRequestDto, GenericResponseDto } from "../../dto/get-generic.dto";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
+import { ILogger } from "../../../domain/interfaces/logger.interface";
 
 export class UpdateGenericUseCase implements IUpdateGenericUseCase {
   constructor(private readonly logger: ILogger) {}
@@ -11,7 +11,7 @@ export class UpdateGenericUseCase implements IUpdateGenericUseCase {
     genericRequest: GenericRequestDto,
     id: string,
   ): Promise<GenericResponseDto & { id: string }> {
-    this.logger.info('CreateGenericUseCase', 'Starting create generic', genericRequest);
+    this.logger.info("CreateGenericUseCase", "Starting create generic", genericRequest);
     if (!id) {
       const error = DomainErrors.GENERIC_ID_REQUIRED;
       throw new DomainException(error.code, error.message, error.statusCode);

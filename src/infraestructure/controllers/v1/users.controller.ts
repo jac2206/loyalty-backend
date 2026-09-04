@@ -1,18 +1,18 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import {
   LoginUserRequestDTO,
   LoginUserResponseDTO,
-} from '../../../application/dto/login-user.dto';
+} from "../../../application/dto/login-user.dto";
 import {
   RegisterUserRequestDTO,
   RegisterUserResponseDTO,
-} from '../../../application/dto/register-user.dto';
-import { GetMeResponseDTO } from '../../../application/dto/me-user.dto';
-import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases/users/register-user.usecase.interface';
-import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases/users/login-user.usecase.interface';
-import { IGetMeUseCase } from '../../../domain/interfaces/use-cases/users/get-me.usecase.interface';
-import { GetUsersResponseDTO } from '../../../application/dto/get-users.dto';
-import { IGetAllUsersUseCase } from '../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface';
+} from "../../../application/dto/register-user.dto";
+import { GetMeResponseDTO } from "../../../application/dto/me-user.dto";
+import { IRegisterUserUseCase } from "../../../domain/interfaces/use-cases/users/register-user.usecase.interface";
+import { ILoginUserUseCase } from "../../../domain/interfaces/use-cases/users/login-user.usecase.interface";
+import { IGetMeUseCase } from "../../../domain/interfaces/use-cases/users/get-me.usecase.interface";
+import { GetUsersResponseDTO } from "../../../application/dto/get-users.dto";
+import { IGetAllUsersUseCase } from "../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface";
 
 export class UsersController {
   constructor(

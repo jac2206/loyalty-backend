@@ -1,16 +1,16 @@
-import { describe, it, expect } from 'vitest';
-import { CreateGenericUseCase } from '../../../../src/application/use-cases/generic/create-generic.usecase';
-import { DomainException } from '../../../../src/domain/exceptions/domain.exception';
-import { DomainErrors } from '../../../../src/domain/errors/domain-errors';
+import { describe, it, expect } from "vitest";
+import { CreateGenericUseCase } from "../../../../src/application/use-cases/generic/create-generic.usecase";
+import { DomainException } from "../../../../src/domain/exceptions/domain.exception";
+import { DomainErrors } from "../../../../src/domain/errors/domain-errors";
 
-describe('CreateGenericUseCase', () => {
-  describe('Success cases', () => {
-    it('should return a GenericResponseDto with expected data', async () => {
+describe("CreateGenericUseCase", () => {
+  describe("Success cases", () => {
+    it("should return a GenericResponseDto with expected data", async () => {
       const useCase = new CreateGenericUseCase();
 
       const request = {
-        name: 'Julian',
-        lastName: 'Arango',
+        name: "Julian",
+        lastName: "Arango",
         age: 32,
       };
 
@@ -18,44 +18,44 @@ describe('CreateGenericUseCase', () => {
 
       expect(result).toBeDefined();
       expect(result).toEqual({
-        name: 'Julian',
-        lastName: 'Arango',
+        name: "Julian",
+        lastName: "Arango",
         age: 32,
       });
     });
   });
 
-  describe('Validation errors', () => {
-    it('should throw DomainException when name is empty', async () => {
+  describe("Validation errors", () => {
+    it("should throw DomainException when name is empty", async () => {
       const useCase = new CreateGenericUseCase();
 
       const request = {
-        name: '',
-        lastName: 'Arango',
+        name: "",
+        lastName: "Arango",
         age: 32,
       };
 
       await expect(useCase.execute(request)).rejects.toBeInstanceOf(DomainException);
     });
 
-    it('should throw DomainException when name has less than 3 characters', async () => {
+    it("should throw DomainException when name has less than 3 characters", async () => {
       const useCase = new CreateGenericUseCase();
 
       const request = {
-        name: 'Ju',
-        lastName: 'Arango',
+        name: "Ju",
+        lastName: "Arango",
         age: 32,
       };
 
       await expect(useCase.execute(request)).rejects.toBeInstanceOf(DomainException);
     });
 
-    it('should throw DomainException with correct error properties', async () => {
+    it("should throw DomainException with correct error properties", async () => {
       const useCase = new CreateGenericUseCase();
 
       const request = {
-        name: 'A',
-        lastName: 'Test',
+        name: "A",
+        lastName: "Test",
         age: 20,
       };
 

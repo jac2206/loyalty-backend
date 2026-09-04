@@ -1,10 +1,10 @@
-import bcrypt from 'bcrypt';
-import { LoginUserRequestDTO, LoginUserResponseDTO } from '../../dto/login-user.dto';
-import { IUserRepository } from '../../../domain/interfaces/repositories/user.repository.interface';
-import { ILoginUserUseCase } from '../../../domain/interfaces/use-cases/users/login-user.usecase.interface';
-import { IAuthService } from '../../../domain/interfaces/services/auth.service.interface';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
+import bcrypt from "bcrypt";
+import { LoginUserRequestDTO, LoginUserResponseDTO } from "../../dto/login-user.dto";
+import { IUserRepository } from "../../../domain/interfaces/repositories/user.repository.interface";
+import { ILoginUserUseCase } from "../../../domain/interfaces/use-cases/users/login-user.usecase.interface";
+import { IAuthService } from "../../../domain/interfaces/services/auth.service.interface";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
 
 export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
@@ -30,8 +30,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const token = this.authService.generateToken({
       sub: user.documentNumber,
       email: user.email,
-      type: 'access',
-      scopes: ['user'],
+      type: "access",
+      scopes: ["user"],
     });
 
     const response: LoginUserResponseDTO = {

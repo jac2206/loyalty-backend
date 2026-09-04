@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const accumulateRequestSchema = z.object({
   documentType: z.string(),
@@ -31,17 +31,17 @@ export const redeemeResponseSchema = z.object({
 });
 
 export const transactionParamsSchema = z.object({
-  documentType: z.enum(['CC', 'CE', 'NIT', 'PT']),
+  documentType: z.enum(["CC", "CE", "NIT", "PT"]),
   documentNumber: z.string(),
 });
 
 export const transactionsQuerySchema = z.object({
-  type: z.enum(['ACUM', 'REDEM']).optional(),
+  type: z.enum(["ACUM", "REDEM"]).optional(),
 });
 
 export const transactionItemSchema = z.object({
   id: z.string(),
-  type: z.enum(['ACUM', 'REDEM']),
+  type: z.enum(["ACUM", "REDEM"]),
   points: z.number(),
   amount: z.number(),
   partnerCode: z.string(),

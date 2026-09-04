@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { IGetTransactionsUseCase } from '../../../domain/interfaces/use-cases/transactions/get-transactions.usecase.interface';
-import { GetTransactionsResponseDTO } from '../../../application/dto/get-transactions.dto';
-import { IAccumulatePointsUseCase } from '../../../domain/interfaces/use-cases/transactions/accumulate-points.usecase.interface';
-import { AccumulatePointsResponseDTO } from '../../../application/dto/accumulate-points.dto';
-import { RedeemPointsResponseDTO } from '../../../application/dto/redeem-points.dto';
-import { IRedeemPointsUseCase } from '../../../domain/interfaces/use-cases/transactions/redeem-points.usecase.interface';
+import { Request, Response } from "express";
+import { IGetTransactionsUseCase } from "../../../domain/interfaces/use-cases/transactions/get-transactions.usecase.interface";
+import { GetTransactionsResponseDTO } from "../../../application/dto/get-transactions.dto";
+import { IAccumulatePointsUseCase } from "../../../domain/interfaces/use-cases/transactions/accumulate-points.usecase.interface";
+import { AccumulatePointsResponseDTO } from "../../../application/dto/accumulate-points.dto";
+import { RedeemPointsResponseDTO } from "../../../application/dto/redeem-points.dto";
+import { IRedeemPointsUseCase } from "../../../domain/interfaces/use-cases/transactions/redeem-points.usecase.interface";
 
 export class TransactionsController {
   constructor(

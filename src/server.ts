@@ -1,12 +1,12 @@
-import express from 'express';
-import { scopePerRequest } from 'awilix-express';
-import { container } from './config/container';
-import v1Routes from './infraestructure/http/routes/v1';
-import healthRouters from './infraestructure/http/routes/health.routes';
-import { errorMiddleware } from './infraestructure/http/middlewares/error.middleware';
-import swaggerUi from 'swagger-ui-express';
-import { generateSwagger } from './infraestructure/docs/swagger';
-import cors from 'cors';
+import express from "express";
+import { scopePerRequest } from "awilix-express";
+import { container } from "./config/container";
+import v1Routes from "./infraestructure/http/routes/v1";
+import healthRouters from "./infraestructure/http/routes/health.routes";
+import { errorMiddleware } from "./infraestructure/http/middlewares/error.middleware";
+import swaggerUi from "swagger-ui-express";
+import { generateSwagger } from "./infraestructure/docs/swagger";
+import cors from "cors";
 
 export const createServer = () => {
   const swaggerDoc = generateSwagger();
@@ -14,9 +14,9 @@ export const createServer = () => {
   swaggerDoc.components = swaggerDoc.components || {};
   swaggerDoc.components.securitySchemes = {
     bearerAuth: {
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
     },
   };
 
@@ -26,7 +26,7 @@ export const createServer = () => {
     },
   ];
 
-  const prefix = '/loyalty';
+  const prefix = "/loyalty";
 
   const app = express();
 
@@ -34,9 +34,9 @@ export const createServer = () => {
     cors({
       origin: (origin, callback) => {
         const allowed = [
-          'http://localhost:3000',
-          'http://localhost:4002',
-          'https://loyalty-web-mocha.vercel.app',
+          "http://localhost:3000",
+          "http://localhost:4002",
+          "https://loyalty-web-mocha.vercel.app",
         ];
 
         if (!origin) return callback(null, true);
@@ -45,7 +45,7 @@ export const createServer = () => {
           return callback(null, true);
         }
 
-        return callback(new Error('Not allowed by CORS'));
+        return callback(new Error("Not allowed by CORS"));
       },
       credentials: true,
     }),
@@ -56,14 +56,14 @@ export const createServer = () => {
   app.use(scopePerRequest(container));
 
   app.use(
-    '/docs',
+    "/docs",
     swaggerUi.serve,
     swaggerUi.setup(swaggerDoc, {
       swaggerOptions: {
         persistAuthorization: true,
         displayRequestDuration: true,
       },
-      customSiteTitle: 'Loyalty API Docs',
+      customSiteTitle: "Loyalty API Docs",
     }),
   );
   app.use(`${prefix}/health`, healthRouters);
@@ -71,7 +71,7 @@ export const createServer = () => {
 
   app.use((req, res) => {
     res.status(404).json({
-      message: 'Route not found',
+      message: "Route not found",
       code: 404,
     });
   });

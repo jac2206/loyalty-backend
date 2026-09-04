@@ -4,7 +4,7 @@ export class Transaction {
     public readonly accountId: string,
     public readonly partnerCode: string,
     public readonly locationCode: string | null,
-    public readonly type: 'ACUM' | 'REDEM',
+    public readonly type: "ACUM" | "REDEM",
     public readonly points: number,
     public readonly amount: number,
     public readonly reference: string,

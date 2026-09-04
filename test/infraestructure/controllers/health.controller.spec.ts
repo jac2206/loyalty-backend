@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { HealthController } from '../../../src/infraestructure/controllers/health.controller';
-import { IHealthService } from '../../../src/domain/interfaces/services/health.service.interface';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { HealthController } from "../../../src/infraestructure/controllers/health.controller";
+import { IHealthService } from "../../../src/domain/interfaces/services/health.service.interface";
 
-describe('HealthController', () => {
+describe("HealthController", () => {
   let healthServiceMock: IHealthService;
   let controller: HealthController;
 
@@ -12,7 +12,7 @@ describe('HealthController', () => {
     controller = new HealthController(healthServiceMock);
   });
 
-  it('should return status ok', async () => {
+  it("should return status ok", async () => {
     const req = {};
 
     const jsonMock = vi.fn();
@@ -25,7 +25,8 @@ describe('HealthController', () => {
     expect(jsonMock).toHaveBeenCalledTimes(1);
 
     expect(jsonMock).toHaveBeenCalledWith({
-      status: 'ok',
+      status: "ok",
+      service: "loyalty-backend",
     });
   });
 });

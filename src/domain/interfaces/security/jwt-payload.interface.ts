@@ -3,7 +3,7 @@ export interface JwtPayload {
   username?: string;
   email?: string;
   client_id?: string;
-  type: 'access' | 'refresh';
+  type: "access" | "refresh";
   scopes?: string[];
   iss?: string;
   aud?: string;

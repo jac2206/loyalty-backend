@@ -1,6 +1,6 @@
-import { pool } from '../../database/postgres';
-import { User } from '../../../domain/entities/user.entity';
-import { IUserRepository } from '../../../domain/interfaces/repositories/user.repository.interface';
+import { pool } from "../../database/postgres";
+import { User } from "../../../domain/entities/user.entity";
+import { IUserRepository } from "../../../domain/interfaces/repositories/user.repository.interface";
 
 export class UserRepository implements IUserRepository {
   async save(entity: User): Promise<User> {

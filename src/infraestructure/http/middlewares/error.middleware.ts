@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
-import { logger } from '../../logger/logger';
+import { Request, Response, NextFunction } from "express";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { logger } from "../../logger/logger";
 
 export const errorMiddleware = (
   err: unknown,
@@ -25,7 +25,7 @@ export const errorMiddleware = (
   logger.error(err);
 
   res.status(500).json({
-    code: 'INTERNAL_SERVER_ERROR',
-    message: 'Internal Server Error',
+    code: "INTERNAL_SERVER_ERROR",
+    message: "Internal Server Error",
   });
 };

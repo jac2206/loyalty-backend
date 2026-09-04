@@ -1,10 +1,10 @@
-import { Router, RequestHandler } from 'express';
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
-import { ZodTypeAny, ZodObject, ZodRawShape } from 'zod';
-import { errorResponseSchema } from '../schemas/error.schema';
+import { Router, RequestHandler } from "express";
+import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
+import { ZodTypeAny, ZodObject, ZodRawShape } from "zod";
+import { errorResponseSchema } from "../schemas/error.schema";
 
 type RouteConfig = {
-  method: 'get' | 'post' | 'patch' | 'delete';
+  method: "get" | "post" | "patch" | "delete";
   path: string;
   swaggerPath: string;
   tag: string;
@@ -20,33 +20,33 @@ type RouteConfig = {
 
 const defaultResponses = {
   400: {
-    description: 'Bad Request',
+    description: "Bad Request",
     content: {
-      'application/json': {
+      "application/json": {
         schema: errorResponseSchema,
       },
     },
   },
   401: {
-    description: 'Unauthorized',
+    description: "Unauthorized",
     content: {
-      'application/json': {
+      "application/json": {
         schema: errorResponseSchema,
       },
     },
   },
   422: {
-    description: 'Validation Error',
+    description: "Validation Error",
     content: {
-      'application/json': {
+      "application/json": {
         schema: errorResponseSchema,
       },
     },
   },
   500: {
-    description: 'Internal Server Error',
+    description: "Internal Server Error",
     content: {
-      'application/json': {
+      "application/json": {
         schema: errorResponseSchema,
       },
     },
@@ -84,7 +84,7 @@ export const registerRoute = (
       ...(bodySchema && {
         body: {
           content: {
-            'application/json': {
+            "application/json": {
               schema: bodySchema,
             },
           },
@@ -104,10 +104,10 @@ export const registerRoute = (
 
     responses: {
       200: {
-        description: 'Success',
+        description: "Success",
         content: responseSchema
           ? {
-              'application/json': {
+              "application/json": {
                 schema: responseSchema,
               },
             }

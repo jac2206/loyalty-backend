@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
 export const authorizeScopes =
   (requiredScopes: string[]) =>
@@ -7,8 +7,8 @@ export const authorizeScopes =
 
     if (!user?.scopes) {
       res.status(403).json({
-        code: 'FORBIDDEN',
-        message: 'No scopes found',
+        code: "FORBIDDEN",
+        message: "No scopes found",
       });
       return;
     }
@@ -17,8 +17,8 @@ export const authorizeScopes =
 
     if (!hasScope) {
       res.status(401).json({
-        code: 'UNAUTHORIZED ',
-        message: 'Insufficient permissions',
+        code: "UNAUTHORIZED ",
+        message: "Insufficient permissions",
       });
       return;
     }

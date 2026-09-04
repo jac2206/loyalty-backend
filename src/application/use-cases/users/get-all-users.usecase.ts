@@ -1,6 +1,6 @@
-import { IUserRepository } from '../../../domain/interfaces/repositories/user.repository.interface';
-import { IGetAllUsersUseCase } from '../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface';
-import { GetUsersResponseDTO } from '../../dto/get-users.dto';
+import { IUserRepository } from "../../../domain/interfaces/repositories/user.repository.interface";
+import { IGetAllUsersUseCase } from "../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface";
+import { GetUsersResponseDTO } from "../../dto/get-users.dto";
 
 export class GetAllUsersUseCase implements IGetAllUsersUseCase {
   constructor(private readonly userRepository: IUserRepository) {}

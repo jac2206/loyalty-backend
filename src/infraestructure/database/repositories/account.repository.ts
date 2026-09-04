@@ -1,5 +1,5 @@
-import { pool } from '../../database/postgres';
-import { IAccountRepository } from '../../../domain/interfaces/repositories/account.repository.interface';
+import { pool } from "../../database/postgres";
+import { IAccountRepository } from "../../../domain/interfaces/repositories/account.repository.interface";
 
 export class AccountRepository implements IAccountRepository {
   async getBalanceByDocument(
