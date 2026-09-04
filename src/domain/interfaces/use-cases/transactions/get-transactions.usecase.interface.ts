@@ -1,4 +1,4 @@
-import { GetTransactionsResponseDTO } from '../../../../application/dto/get-transactions.dto';
+import { GetTransactionsResponseDTO } from "../../../../application/dto/get-transactions.dto";
 
 export interface IGetTransactionsUseCase {
   execute(

@@ -1,8 +1,8 @@
-import { createServer } from './server';
-import { env } from './config/env';
-import { printEnvironmentVariables } from './util/env-printer';
-import { closeDatabase, connectDatabase } from './infraestructure/database/postgres';
-import { logger } from './infraestructure/logger/logger';
+import { createServer } from "./server";
+import { env } from "./config/env";
+import { printEnvironmentVariables } from "./util/env-printer";
+import { closeDatabase, connectDatabase } from "./infraestructure/database/postgres";
+import { logger } from "./infraestructure/logger/logger";
 
 async function bootstrap() {
   const app = createServer();
@@ -16,9 +16,9 @@ async function bootstrap() {
 
     try {
       await connectDatabase();
-      console.log('✅ Database connected');
+      console.log("✅ Database connected");
     } catch (error) {
-      console.error('❌ Database connection failed');
+      console.error("❌ Database connection failed");
     }
 
     if (env.showEnv) {
@@ -27,7 +27,7 @@ async function bootstrap() {
   });
 
   const shutdown = async () => {
-    logger.info('🛑 Shutting down gracefully...');
+    logger.info("🛑 Shutting down gracefully...");
 
     server.close(async () => {
       await closeDatabase();
@@ -35,8 +35,8 @@ async function bootstrap() {
     });
   };
 
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
 }
 
 bootstrap();

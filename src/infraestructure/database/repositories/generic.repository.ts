@@ -1,6 +1,6 @@
-import { pool } from '../../database/postgres';
-import { Generic } from '../../../domain/entities/generic.entity';
-import { IGenericRepository } from '../../../domain/interfaces/repositories/generic.repository.interface';
+import { pool } from "../../database/postgres";
+import { Generic } from "../../../domain/entities/generic.entity";
+import { IGenericRepository } from "../../../domain/interfaces/repositories/generic.repository.interface";
 
 export class GenericRepository implements IGenericRepository {
   async save(entity: Generic): Promise<Generic> {
@@ -19,7 +19,7 @@ export class GenericRepository implements IGenericRepository {
   }
 
   async findById(id: string): Promise<Generic | null> {
-    const result = await pool.query('SELECT * FROM generics WHERE id = $1', [id]);
+    const result = await pool.query("SELECT * FROM generics WHERE id = $1", [id]);
 
     if (result.rows.length === 0) return null;
 

@@ -1,6 +1,6 @@
 export class User {
   constructor(
-    public readonly documentType: 'CC' | 'CE' | 'NIT' | 'PT',
+    public readonly documentType: "CC" | "CE" | "NIT" | "PT",
     public readonly documentNumber: string,
     public readonly fullName: string,
     public readonly email: string,

@@ -1,13 +1,13 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import {
   RegisterUserRequestDTO,
   RegisterUserResponseDTO,
-} from '../../dto/register-user.dto';
-import { IUserRepository } from '../../../domain/interfaces/repositories/user.repository.interface';
-import { IRegisterUserUseCase } from '../../../domain/interfaces/use-cases/users/register-user.usecase.interface';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
-import { User } from '../../../domain/entities/user.entity';
+} from "../../dto/register-user.dto";
+import { IUserRepository } from "../../../domain/interfaces/repositories/user.repository.interface";
+import { IRegisterUserUseCase } from "../../../domain/interfaces/use-cases/users/register-user.usecase.interface";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { User } from "../../../domain/entities/user.entity";
 
 export class RegisterUserUseCase implements IRegisterUserUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
@@ -44,7 +44,7 @@ export class RegisterUserUseCase implements IRegisterUserUseCase {
       id: savedUser.documentNumber,
       email: savedUser.email,
       fullName: savedUser.fullName,
-      message: 'User registered successfully',
+      message: "User registered successfully",
     };
 
     return response;

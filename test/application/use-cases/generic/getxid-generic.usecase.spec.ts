@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GetXIdGenericUseCase } from '../../../../src/application/use-cases/generic/getxid-generic.usecase';
-import { IGenericRepository } from '../../../../src/domain/interfaces/repositories/generic.repository.interface';
-import { Generic } from '../../../../src/domain/entities/generic.entity';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { GetXIdGenericUseCase } from "../../../../src/application/use-cases/generic/getxid-generic.usecase";
+import { IGenericRepository } from "../../../../src/domain/interfaces/repositories/generic.repository.interface";
+import { Generic } from "../../../../src/domain/entities/generic.entity";
 
-describe('GetXIdGenericUseCase', () => {
+describe("GetXIdGenericUseCase", () => {
   let genericRepositoryMock: IGenericRepository;
   let useCase: GetXIdGenericUseCase;
 
@@ -18,15 +18,15 @@ describe('GetXIdGenericUseCase', () => {
     useCase = new GetXIdGenericUseCase(genericRepositoryMock);
   });
 
-  it('should return a Generic entity when it exists', async () => {
+  it("should return a Generic entity when it exists", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const fakeId = '123';
+    const fakeId = "123";
 
     const fakeGeneric: Generic = {
-      name: 'Julian',
-      lastName: 'Arango',
+      name: "Julian",
+      lastName: "Arango",
       age: 32,
     } as Generic;
 
@@ -56,11 +56,11 @@ describe('GetXIdGenericUseCase', () => {
     expect(result).toEqual(fakeGeneric);
   });
 
-  it('should return null when entity does not exist', async () => {
+  it("should return null when entity does not exist", async () => {
     // ============================
     //AAA - ARRANGE
     // ============================
-    const fakeId = '999';
+    const fakeId = "999";
 
     //MOCK
     (genericRepositoryMock.findById as any).mockResolvedValue(null);
@@ -81,16 +81,16 @@ describe('GetXIdGenericUseCase', () => {
     expect(result).toBeNull();
   });
 
-  it('should call repository exactly once (SPY example)', async () => {
+  it("should call repository exactly once (SPY example)", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const fakeId = 'abc';
+    const fakeId = "abc";
 
     (genericRepositoryMock.findById as any).mockResolvedValue(null);
 
     //SPY
-    const spy = vi.spyOn(genericRepositoryMock, 'findById');
+    const spy = vi.spyOn(genericRepositoryMock, "findById");
 
     // ============================
     //AAA - ACT

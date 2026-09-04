@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { IGetBalanceUseCase } from '../../../domain/interfaces/use-cases/accounts/get-balance.usecase.interface';
-import { GetBalanceResponseDTO } from '../../../application/dto/get-balance.dto';
+import { Request, Response } from "express";
+import { IGetBalanceUseCase } from "../../../domain/interfaces/use-cases/accounts/get-balance.usecase.interface";
+import { GetBalanceResponseDTO } from "../../../application/dto/get-balance.dto";
 
 export class AccountsController {
   constructor(private readonly getBalanceUseCase: IGetBalanceUseCase) {}

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { container } from '../../../config/container';
-import { IAuthService } from '../../../domain/interfaces/services/auth.service.interface';
+import { Request, Response, NextFunction } from "express";
+import { container } from "../../../config/container";
+import { IAuthService } from "../../../domain/interfaces/services/auth.service.interface";
 
 export const authenticateJWT = (
   req: Request,
@@ -9,18 +9,18 @@ export const authenticateJWT = (
 ): void => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader?.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith("Bearer ")) {
     res.status(401).json({
-      code: 'UNAUTHORIZED',
-      message: 'Missing token',
+      code: "UNAUTHORIZED",
+      message: "Missing token",
     });
     return;
   }
 
-  const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
   try {
-    const authService = container.resolve<IAuthService>('authService');
+    const authService = container.resolve<IAuthService>("authService");
     const decoded = authService.verifyToken(token);
 
     (req as any).user = decoded;
@@ -28,8 +28,8 @@ export const authenticateJWT = (
     next();
   } catch {
     res.status(401).json({
-      code: 'INVALID_TOKEN',
-      message: 'Token invalid or expired',
+      code: "INVALID_TOKEN",
+      message: "Token invalid or expired",
     });
   }
 };

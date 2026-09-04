@@ -1,5 +1,5 @@
 export interface RegisterUserRequestDTO {
-  documentType: 'CC' | 'CE' | 'NIT' | 'PT';
+  documentType: "CC" | "CE" | "NIT" | "PT";
   documentNumber: string;
   fullName: string;
   email: string;

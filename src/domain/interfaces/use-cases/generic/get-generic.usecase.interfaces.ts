@@ -1,4 +1,4 @@
-import { Generic } from '../../../entities/generic.entity';
+import { Generic } from "../../../entities/generic.entity";
 
 // export interface IGenericUseCase<Input, Output> {
 //   execute(input: Input): Promise<Output>;

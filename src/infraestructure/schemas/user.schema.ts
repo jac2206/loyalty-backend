@@ -1,5 +1,5 @@
-import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
-import { z } from 'zod';
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
@@ -17,12 +17,12 @@ export const registerUserRequestSchema = z
   })
   .openapi({
     example: {
-      documentType: 'CC',
-      documentNumber: '1037630472',
-      fullName: 'Julian Arango',
-      email: 'julian@email.com',
-      phone: '3117468187',
-      password: 'Password1',
+      documentType: "CC",
+      documentNumber: "1037630472",
+      fullName: "Julian Arango",
+      email: "julian@email.com",
+      phone: "3117468187",
+      password: "Password1",
     },
   });
 

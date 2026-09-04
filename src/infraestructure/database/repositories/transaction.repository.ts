@@ -1,6 +1,6 @@
-import { pool } from '../../database/postgres';
-import { Transaction } from '../../../domain/entities/transaction.entity';
-import { ITransactionRepository } from '../../../domain/interfaces/repositories/transaction.repository.interface';
+import { pool } from "../../database/postgres";
+import { Transaction } from "../../../domain/entities/transaction.entity";
+import { ITransactionRepository } from "../../../domain/interfaces/repositories/transaction.repository.interface";
 
 export class TransactionRepository implements ITransactionRepository {
   async findByUser(
@@ -29,7 +29,7 @@ export class TransactionRepository implements ITransactionRepository {
     const params: any[] = [documentType, documentNumber];
 
     if (type) {
-      query += ' AND t.type = $3';
+      query += " AND t.type = $3";
       params.push(type);
     }
 

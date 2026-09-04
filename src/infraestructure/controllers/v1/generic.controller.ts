@@ -1,15 +1,15 @@
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 import {
   GenericResponseDto,
   GenericRequestDto,
-} from '../../../application/dto/get-generic.dto';
-import { IGetGenericUseCase } from '../../../domain/interfaces/use-cases/generic/get-generic.usecase.interfaces';
-import { ICreateGenericUseCase } from '../../../domain/interfaces/use-cases/generic/create-generic.usecase.interface';
-import { IUpdateGenericUseCase } from '../../../domain/interfaces/use-cases/generic/update-generic.usecase.interface';
-import { IGetXIdGenericUseCase } from '../../../domain/interfaces/use-cases/generic/getxid-generic.usecase.interface';
-import { UpdateGenericResponseUseCaseDto } from '../../../application/dto/update-generic.dto';
-import { IGetPokemonXNameUseCase } from '../../../domain/interfaces/use-cases/generic/get-pokemonxname.usecase.interface';
-import { PokemonResponseDto } from '../../../application/dto/pokemon.dto';
+} from "../../../application/dto/get-generic.dto";
+import { IGetGenericUseCase } from "../../../domain/interfaces/use-cases/generic/get-generic.usecase.interfaces";
+import { ICreateGenericUseCase } from "../../../domain/interfaces/use-cases/generic/create-generic.usecase.interface";
+import { IUpdateGenericUseCase } from "../../../domain/interfaces/use-cases/generic/update-generic.usecase.interface";
+import { IGetXIdGenericUseCase } from "../../../domain/interfaces/use-cases/generic/getxid-generic.usecase.interface";
+import { UpdateGenericResponseUseCaseDto } from "../../../application/dto/update-generic.dto";
+import { IGetPokemonXNameUseCase } from "../../../domain/interfaces/use-cases/generic/get-pokemonxname.usecase.interface";
+import { PokemonResponseDto } from "../../../application/dto/pokemon.dto";
 
 export class GenericController {
   constructor(
@@ -80,7 +80,7 @@ export class GenericController {
     const id = _req.params.id;
     const result = await this.updateGenericUseCase.execute(request, id);
     const response: UpdateGenericResponseUseCaseDto = {
-      message: 'PATCH request received',
+      message: "PATCH request received",
       result: {
         ...result,
       },

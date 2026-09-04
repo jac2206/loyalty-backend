@@ -1,11 +1,11 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from "axios";
 import {
   IHttpClient,
   HttpRequestOptions,
   HttpResponse,
-} from '../../domain/interfaces/http/http-client.interface';
-import { ILogger } from '../../domain/interfaces/logger.interface';
-import { env } from '../../config/env';
+} from "../../domain/interfaces/http/http-client.interface";
+import { ILogger } from "../../domain/interfaces/logger.interface";
+import { env } from "../../config/env";
 
 export class HttpClient implements IHttpClient {
   private readonly client: AxiosInstance;
@@ -20,7 +20,7 @@ export class HttpClient implements IHttpClient {
 
   private initializeInterceptors(): void {
     this.client.interceptors.request.use((config) => {
-      this.logger.info('HttpClient', 'HTTP_REQUEST', {
+      this.logger.info("HttpClient", "HTTP_REQUEST", {
         method: config.method,
         url: config.url,
         headers: config.headers,
@@ -31,7 +31,7 @@ export class HttpClient implements IHttpClient {
 
     this.client.interceptors.response.use(
       (response) => {
-        this.logger.info('HttpClient', 'HTTP_RESPONSE', {
+        this.logger.info("HttpClient", "HTTP_RESPONSE", {
           status: response.status,
           url: response.config.url,
         });
@@ -39,7 +39,7 @@ export class HttpClient implements IHttpClient {
         return response;
       },
       (error: AxiosError) => {
-        this.logger.error('HttpClient', 'HTTP_ERROR', {
+        this.logger.error("HttpClient", "HTTP_ERROR", {
           url: error.config?.url,
           method: error.config?.method,
           status: error.response?.status,
@@ -78,7 +78,7 @@ export class HttpClient implements IHttpClient {
       data: body,
       timeout: timeoutMs,
       headers: {
-        'Content-Type': contentType ?? 'application/json',
+        "Content-Type": contentType ?? "application/json",
         ...headers,
       },
     };
@@ -95,7 +95,7 @@ export class HttpClient implements IHttpClient {
         throw error;
       }
 
-      throw new Error('Unexpected HTTP client error');
+      throw new Error("Unexpected HTTP client error");
     }
   }
 }

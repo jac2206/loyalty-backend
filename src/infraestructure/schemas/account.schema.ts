@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const balanceParamsSchema = z.object({
-  documentType: z.enum(['CC', 'CE', 'NIT', 'PT']),
+  documentType: z.enum(["CC", "CE", "NIT", "PT"]),
   documentNumber: z.string(),
 });
 

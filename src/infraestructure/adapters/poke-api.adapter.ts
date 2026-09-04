@@ -1,11 +1,11 @@
-import { DomainErrors } from '../../domain/errors/domain-errors';
-import { DomainException } from '../../domain/exceptions/domain.exception';
+import { DomainErrors } from "../../domain/errors/domain-errors";
+import { DomainException } from "../../domain/exceptions/domain.exception";
 import {
   IPokeApiAdapter,
   PokemonBasicInfo,
-} from '../../domain/interfaces/adapters/poke-api.adapter.interface';
-import { IHttpClient } from '../../domain/interfaces/http/http-client.interface';
-import { ILogger } from '../../domain/interfaces/logger.interface';
+} from "../../domain/interfaces/adapters/poke-api.adapter.interface";
+import { IHttpClient } from "../../domain/interfaces/http/http-client.interface";
+import { ILogger } from "../../domain/interfaces/logger.interface";
 
 export class PokeApiAdapter implements IPokeApiAdapter {
   constructor(
@@ -16,8 +16,8 @@ export class PokeApiAdapter implements IPokeApiAdapter {
   async getPokemon(name: string): Promise<PokemonBasicInfo> {
     try {
       const responseApi = await this.httpClient.request<any>({
-        method: 'GET',
-        path: 'https://pokeapi.co/api/v2/pokemon/:name',
+        method: "GET",
+        path: "https://pokeapi.co/api/v2/pokemon/:name",
         pathParams: { name },
         timeoutMs: 4000,
       });

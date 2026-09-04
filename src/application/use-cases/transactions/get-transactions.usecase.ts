@@ -1,8 +1,8 @@
-import { IGetTransactionsUseCase } from '../../../domain/interfaces/use-cases/transactions/get-transactions.usecase.interface';
-import { ITransactionRepository } from '../../../domain/interfaces/repositories/transaction.repository.interface';
-import { GetTransactionsResponseDTO } from '../../dto/get-transactions.dto';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
+import { IGetTransactionsUseCase } from "../../../domain/interfaces/use-cases/transactions/get-transactions.usecase.interface";
+import { ITransactionRepository } from "../../../domain/interfaces/repositories/transaction.repository.interface";
+import { GetTransactionsResponseDTO } from "../../dto/get-transactions.dto";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
 
 export class GetTransactionsUseCase implements IGetTransactionsUseCase {
   constructor(private readonly transactionRepository: ITransactionRepository) {}
@@ -17,7 +17,7 @@ export class GetTransactionsUseCase implements IGetTransactionsUseCase {
       throw new DomainException(error.code, error.message, error.statusCode);
     }
 
-    if (type && !['ACUM', 'REDEM'].includes(type)) {
+    if (type && !["ACUM", "REDEM"].includes(type)) {
       const error = DomainErrors.TRANSACTION_TYPE_INVALID;
       throw new DomainException(error.code, error.message, error.statusCode);
     }

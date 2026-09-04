@@ -1,21 +1,21 @@
-import { describe, expect, it, vi } from 'vitest';
-import { AccumulatePointsUseCase } from '../../../../src/application/use-cases/transactions/accumulate-points.usecase';
-import { DomainErrors } from '../../../../src/domain/errors/domain-errors';
-import { IAccountRepository } from '../../../../src/domain/interfaces/repositories/account.repository.interface';
-import { ITransactionRepository } from '../../../../src/domain/interfaces/repositories/transaction.repository.interface';
+import { describe, expect, it, vi } from "vitest";
+import { AccumulatePointsUseCase } from "../../../../src/application/use-cases/transactions/accumulate-points.usecase";
+import { DomainErrors } from "../../../../src/domain/errors/domain-errors";
+import { IAccountRepository } from "../../../../src/domain/interfaces/repositories/account.repository.interface";
+import { ITransactionRepository } from "../../../../src/domain/interfaces/repositories/transaction.repository.interface";
 
-describe('AccumulatePointsUseCase', () => {
+describe("AccumulatePointsUseCase", () => {
   const request = {
-    documentType: 'CC',
-    documentNumber: '123',
-    partnerCode: 'SHOP',
+    documentType: "CC",
+    documentNumber: "123",
+    partnerCode: "SHOP",
     amount: 2_999,
-    reference: 'purchase-1',
+    reference: "purchase-1",
   };
 
-  it('creates an ACUM transaction and adds floor(amount / 1000) points', async () => {
+  it("creates an ACUM transaction and adds floor(amount / 1000) points", async () => {
     const accountRepository = {
-      getAccountIdByDocument: vi.fn().mockResolvedValue('account-1'),
+      getAccountIdByDocument: vi.fn().mockResolvedValue("account-1"),
       addPoints: vi.fn().mockResolvedValue(12),
     } as unknown as IAccountRepository;
     const transactionRepository = {
@@ -27,23 +27,23 @@ describe('AccumulatePointsUseCase', () => {
         request,
       ),
     ).resolves.toEqual({
-      message: 'Points accumulated successfully',
+      message: "Points accumulated successfully",
       pointsEarned: 2,
       balance: 12,
     });
     expect(transactionRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        accountId: 'account-1',
-        type: 'ACUM',
+        accountId: "account-1",
+        type: "ACUM",
         points: 2,
         amount: 2_999,
         locationCode: null,
       }),
     );
-    expect(accountRepository.addPoints).toHaveBeenCalledWith('account-1', 2);
+    expect(accountRepository.addPoints).toHaveBeenCalledWith("account-1", 2);
   });
 
-  it('rejects a non-positive amount without calling any port', async () => {
+  it("rejects a non-positive amount without calling any port", async () => {
     const accountRepository = {
       getAccountIdByDocument: vi.fn(),
       addPoints: vi.fn(),
@@ -62,7 +62,7 @@ describe('AccumulatePointsUseCase', () => {
     expect(transactionRepository.save).not.toHaveBeenCalled();
   });
 
-  it('rejects a missing account without saving a transaction or changing balance', async () => {
+  it("rejects a missing account without saving a transaction or changing balance", async () => {
     const accountRepository = {
       getAccountIdByDocument: vi.fn().mockResolvedValue(null),
       addPoints: vi.fn(),

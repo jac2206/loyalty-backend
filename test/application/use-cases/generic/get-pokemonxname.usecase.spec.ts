@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { GetPokemonXNameUseCase } from '../../../../src/application/use-cases/generic/get-pokemonxname.usecase';
-import { ILogger } from '../../../../src/domain/interfaces/logger.interface';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { GetPokemonXNameUseCase } from "../../../../src/application/use-cases/generic/get-pokemonxname.usecase";
+import { ILogger } from "../../../../src/domain/interfaces/logger.interface";
 import {
   IPokeApiAdapter,
   PokemonBasicInfo,
-} from '../../../../src/domain/interfaces/adapters/poke-api.adapter.interface';
+} from "../../../../src/domain/interfaces/adapters/poke-api.adapter.interface";
 
-describe('GetPokemonXNameUseCase', () => {
+describe("GetPokemonXNameUseCase", () => {
   let loggerMock: ILogger;
   let pokeApiAdapterMock: IPokeApiAdapter;
   let useCase: GetPokemonXNameUseCase;
@@ -34,14 +34,14 @@ describe('GetPokemonXNameUseCase', () => {
   // SUCCESS CASE
   // =====================================================
 
-  it('should return pokemon info and log response', async () => {
+  it("should return pokemon info and log response", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const pokemonName = 'pikachu';
+    const pokemonName = "pikachu";
 
     const fakePokemon: PokemonBasicInfo = {
-      name: 'pikachu',
+      name: "pikachu",
       height: 4,
       weight: 60,
     } as PokemonBasicInfo;
@@ -66,8 +66,8 @@ describe('GetPokemonXNameUseCase', () => {
 
     // ✔ Logger fue llamado con la respuesta
     expect(loggerMock.info).toHaveBeenCalledWith(
-      'GetPokemonXNamecUseCase',
-      'Response ExternalApi',
+      "GetPokemonXNamecUseCase",
+      "Response ExternalApi",
       fakePokemon,
     );
 
@@ -79,13 +79,13 @@ describe('GetPokemonXNameUseCase', () => {
   // ERROR CASE
   // =====================================================
 
-  it('should propagate error if adapter fails', async () => {
+  it("should propagate error if adapter fails", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const pokemonName = 'mewtwo';
+    const pokemonName = "mewtwo";
 
-    const fakeError = new Error('External API failed');
+    const fakeError = new Error("External API failed");
 
     (pokeApiAdapterMock.getPokemon as any).mockRejectedValue(fakeError);
 
@@ -93,7 +93,7 @@ describe('GetPokemonXNameUseCase', () => {
     // AAA - ACT & ASSERT
     // ============================
 
-    await expect(useCase.execute(pokemonName)).rejects.toThrow('External API failed');
+    await expect(useCase.execute(pokemonName)).rejects.toThrow("External API failed");
 
     // ✔ Verificamos que el adapter sí fue llamado
     expect(pokeApiAdapterMock.getPokemon).toHaveBeenCalledWith(pokemonName);
@@ -106,16 +106,16 @@ describe('GetPokemonXNameUseCase', () => {
   // SPY EXAMPLE
   // =====================================================
 
-  it('should call logger once when success (SPY example)', async () => {
+  it("should call logger once when success (SPY example)", async () => {
     // ============================
     // AAA - ARRANGE
     // ============================
-    const spy = vi.spyOn(loggerMock, 'info');
+    const spy = vi.spyOn(loggerMock, "info");
 
-    const pokemonName = 'bulbasaur';
+    const pokemonName = "bulbasaur";
 
     const fakePokemon = {
-      name: 'bulbasaur',
+      name: "bulbasaur",
       height: 7,
       weight: 69,
     } as PokemonBasicInfo;

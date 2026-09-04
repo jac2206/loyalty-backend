@@ -1,13 +1,13 @@
-import { IAccumulatePointsUseCase } from '../../../domain/interfaces/use-cases/transactions/accumulate-points.usecase.interface';
+import { IAccumulatePointsUseCase } from "../../../domain/interfaces/use-cases/transactions/accumulate-points.usecase.interface";
 import {
   AccumulatePointsRequestDTO,
   AccumulatePointsResponseDTO,
-} from '../../dto/accumulate-points.dto';
-import { ITransactionRepository } from '../../../domain/interfaces/repositories/transaction.repository.interface';
-import { IAccountRepository } from '../../../domain/interfaces/repositories/account.repository.interface';
-import { Transaction } from '../../../domain/entities/transaction.entity';
-import { DomainException } from '../../../domain/exceptions/domain.exception';
-import { DomainErrors } from '../../../domain/errors/domain-errors';
+} from "../../dto/accumulate-points.dto";
+import { ITransactionRepository } from "../../../domain/interfaces/repositories/transaction.repository.interface";
+import { IAccountRepository } from "../../../domain/interfaces/repositories/account.repository.interface";
+import { Transaction } from "../../../domain/entities/transaction.entity";
+import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { DomainErrors } from "../../../domain/errors/domain-errors";
 
 export class AccumulatePointsUseCase implements IAccumulatePointsUseCase {
   constructor(
@@ -40,7 +40,7 @@ export class AccumulatePointsUseCase implements IAccumulatePointsUseCase {
       accountId,
       request.partnerCode,
       request.locationCode ?? null,
-      'ACUM',
+      "ACUM",
       points,
       request.amount,
       request.reference,
@@ -51,7 +51,7 @@ export class AccumulatePointsUseCase implements IAccumulatePointsUseCase {
     const balance = await this.accountRepository.addPoints(accountId, points);
 
     const result: AccumulatePointsResponseDTO = {
-      message: 'Points accumulated successfully',
+      message: "Points accumulated successfully",
       pointsEarned: points,
       balance: balance,
     };
