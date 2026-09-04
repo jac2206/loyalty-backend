@@ -1,5 +1,4 @@
 export class Transaction {
-
   constructor(
     public readonly id: string | null,
     public readonly accountId: string,
@@ -9,7 +8,7 @@ export class Transaction {
     public readonly points: number,
     public readonly amount: number,
     public readonly reference: string,
-    public readonly createdAt?: Date
+    public readonly createdAt?: Date,
   ) {}
 
   toPersistence() {
@@ -22,8 +21,7 @@ export class Transaction {
       points: this.points,
       amount: this.amount,
       reference: this.reference,
-      created_at: this.createdAt
+      created_at: this.createdAt,
     };
   }
-
 }

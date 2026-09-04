@@ -14,7 +14,7 @@ describe("GetGenericUseCase", () => {
     expect(result.toPersistence()).toEqual({
       name: "Julian",
       lastName: "Arango",
-      age: 30
+      age: 30,
     });
   });
 });

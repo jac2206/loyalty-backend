@@ -1,10 +1,7 @@
 import chalk from "chalk";
 import { env } from "../config/env";
 
-function printObject(
-  obj: Record<string, any>,
-  indent = 0
-): void {
+function printObject(obj: Record<string, any>, indent = 0): void {
   const spacing = " ".repeat(indent);
 
   for (const [key, value] of Object.entries(obj)) {
@@ -12,23 +9,16 @@ function printObject(
       key.toLowerCase().includes("password") ||
       key.toLowerCase().includes("secret") ||
       key.toLowerCase().includes("token") ||
-      key.toLowerCase().includes("database") 
+      key.toLowerCase().includes("database")
     ) {
       continue;
     }
 
     if (typeof value === "object" && value !== null) {
-      console.log(
-        spacing + chalk.cyan.bold(`${key}:`)
-      );
+      console.log(spacing + chalk.cyan.bold(`${key}:`));
       printObject(value, indent + 4);
     } else {
-      console.log(
-        spacing +
-          chalk.green(key) +
-          " = " +
-          chalk.yellow(String(value))
-      );
+      console.log(spacing + chalk.green(key) + " = " + chalk.yellow(String(value)));
     }
   }
 }

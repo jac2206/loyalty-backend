@@ -4,8 +4,7 @@ import { printEnvironmentVariables } from "./util/env-printer";
 import { closeDatabase, connectDatabase } from "./infraestructure/database/postgres";
 import { logger } from "./infraestructure/logger/logger";
 
-async function bootstrap() { 
-
+async function bootstrap() {
   const app = createServer();
 
   const port = env.port;

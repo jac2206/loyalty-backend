@@ -1,8 +1,8 @@
 import {
   RedeemPointsRequestDTO,
-  RedeemPointsResponseDTO
+  RedeemPointsResponseDTO,
 } from "../../../../application/dto/redeem-points.dto";
 
 export interface IRedeemPointsUseCase {
-  execute(request: RedeemPointsRequestDTO): Promise<RedeemPointsResponseDTO>
+  execute(request: RedeemPointsRequestDTO): Promise<RedeemPointsResponseDTO>;
 }

@@ -5,19 +5,15 @@ import { DomainErrors } from "../../../domain/errors/domain-errors";
 import { DomainException } from "../../../domain/exceptions/domain.exception";
 
 export class GetBalanceUseCase implements IGetBalanceUseCase {
-
-  constructor(
-    private readonly accountRepository: IAccountRepository
-  ) {}
+  constructor(private readonly accountRepository: IAccountRepository) {}
 
   async execute(
     documentType: string,
-    documentNumber: string
+    documentNumber: string,
   ): Promise<GetBalanceResponseDTO> {
-
     const balance = await this.accountRepository.getBalanceByDocument(
       documentType,
-      documentNumber
+      documentNumber,
     );
 
     if (balance === null) {
@@ -28,11 +24,9 @@ export class GetBalanceUseCase implements IGetBalanceUseCase {
     return {
       documentType,
       documentNumber,
-      balance
+      balance,
     };
-
-  };
-
+  }
 }
 
 export { GetBalanceResponseDTO };

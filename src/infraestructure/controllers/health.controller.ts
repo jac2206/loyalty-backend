@@ -4,6 +4,6 @@ export class HealthController {
   constructor(private readonly healthService: IHealthService) {}
 
   getHealth = async (_req: any, res: any) => {
-    res.json({ status: "ok" });
+    res.json({ status: "ok", service: "loyalty-backend" });
   };
 }

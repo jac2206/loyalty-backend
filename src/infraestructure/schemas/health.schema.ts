@@ -1,5 +1,5 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const healthSchema = z.object({
-  status: z.string()
-})
+  status: z.string(),
+});

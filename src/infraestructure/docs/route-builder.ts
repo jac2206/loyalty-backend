@@ -1,64 +1,63 @@
-import { Router, RequestHandler } from "express"
-import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi"
-import { ZodTypeAny, ZodObject, ZodRawShape } from "zod"
-import { errorResponseSchema } from "../schemas/error.schema"
+import { Router, RequestHandler } from "express";
+import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
+import { ZodTypeAny, ZodObject, ZodRawShape } from "zod";
+import { errorResponseSchema } from "../schemas/error.schema";
 
 type RouteConfig = {
-  method: "get" | "post" | "patch" | "delete"
-  path: string
-  swaggerPath: string
-  tag: string
-  bodySchema?: ZodTypeAny
-  paramsSchema?: ZodObject<ZodRawShape>
-  querySchema?: ZodObject<ZodRawShape>
-  responseSchema?: ZodTypeAny
-  handler: RequestHandler
-  middlewares?: RequestHandler[]
-  customResponses?: Record<number, any>
-  isProtected?: boolean 
-}
+  method: "get" | "post" | "patch" | "delete";
+  path: string;
+  swaggerPath: string;
+  tag: string;
+  bodySchema?: ZodTypeAny;
+  paramsSchema?: ZodObject<ZodRawShape>;
+  querySchema?: ZodObject<ZodRawShape>;
+  responseSchema?: ZodTypeAny;
+  handler: RequestHandler;
+  middlewares?: RequestHandler[];
+  customResponses?: Record<number, any>;
+  isProtected?: boolean;
+};
 
 const defaultResponses = {
   400: {
     description: "Bad Request",
     content: {
       "application/json": {
-        schema: errorResponseSchema
-      }
-    }
+        schema: errorResponseSchema,
+      },
+    },
   },
   401: {
     description: "Unauthorized",
     content: {
       "application/json": {
-        schema: errorResponseSchema
-      }
-    }
+        schema: errorResponseSchema,
+      },
+    },
   },
   422: {
     description: "Validation Error",
     content: {
       "application/json": {
-        schema: errorResponseSchema
-      }
-    }
+        schema: errorResponseSchema,
+      },
+    },
   },
   500: {
     description: "Internal Server Error",
     content: {
       "application/json": {
-        schema: errorResponseSchema
-      }
-    }
-  }
-}
+        schema: errorResponseSchema,
+      },
+    },
+  },
+};
 
 export const registerRoute = (
   router: Router,
   registry: OpenAPIRegistry,
-  config: RouteConfig
+  config: RouteConfig,
 ) => {
-
   const {
     method,
     path,
@@ -71,10 +70,10 @@ export const registerRoute = (
     handler,
     middlewares = [],
     customResponses = {},
-    isProtected = false 
-  } = config
+    isProtected = false,
+  } = config;
 
-  router[method](path, ...middlewares, handler)
+  router[method](path, ...middlewares, handler);
 
   registry.registerPath({
     method,
@@ -86,24 +85,22 @@ export const registerRoute = (
         body: {
           content: {
             "application/json": {
-              schema: bodySchema
-            }
-          }
-        }
+              schema: bodySchema,
+            },
+          },
+        },
       }),
 
       ...(paramsSchema && {
-        params: paramsSchema
+        params: paramsSchema,
       }),
 
       ...(querySchema && {
-        query: querySchema
-      })
+        query: querySchema,
+      }),
     },
 
-    security: isProtected
-      ? [{ bearerAuth: [] }]
-      : undefined,
+    security: isProtected ? [{ bearerAuth: [] }] : undefined,
 
     responses: {
       200: {
@@ -111,14 +108,14 @@ export const registerRoute = (
         content: responseSchema
           ? {
               "application/json": {
-                schema: responseSchema
-              }
+                schema: responseSchema,
+              },
             }
-          : undefined
+          : undefined,
       },
 
       ...defaultResponses,
-      ...customResponses
-    }
-  })
-}
+      ...customResponses,
+    },
+  });
+};

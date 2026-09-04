@@ -17,7 +17,7 @@ registerRoute(router, registry, {
   handler: async (req, res) => {
     const controller = container.resolve<HealthController>("healthController");
     return controller.getHealth(req, res);
-  }
-})
+  },
+});
 
 export default router;

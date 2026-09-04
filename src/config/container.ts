@@ -1,8 +1,4 @@
-import {
-  createContainer,
-  asClass,
-  InjectionMode
-} from "awilix";
+import { createContainer, asClass, InjectionMode } from "awilix";
 
 import { HealthService } from "../infraestructure/services/health.service";
 import { HealthController } from "../infraestructure/controllers/health.controller";
@@ -33,7 +29,7 @@ import { RedeemPointsUseCase } from "../application/use-cases/transactions/redee
 import { GetAllUsersUseCase } from "../application/use-cases/users/get-all-users.usecase";
 
 export const container = createContainer({
-  injectionMode: InjectionMode.CLASSIC
+  injectionMode: InjectionMode.CLASSIC,
 });
 
 container.register({
@@ -66,11 +62,11 @@ container.register({
   accountsController: asClass(AccountsController).scoped(),
   transactionsController: asClass(TransactionsController).scoped(),
 
-  httpClient: asClass(HttpClient).singleton()
+  httpClient: asClass(HttpClient).singleton(),
 });
 
 container.register({
-  logger: asClass(WinstonLogger).singleton()
+  logger: asClass(WinstonLogger).singleton(),
 });
 
 container.register({

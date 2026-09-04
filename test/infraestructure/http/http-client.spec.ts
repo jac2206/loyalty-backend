@@ -14,11 +14,11 @@ vi.mock("axios", async () => {
         request: requestMock,
         interceptors: {
           request: { use: requestInterceptorUseMock },
-          response: { use: responseInterceptorUseMock }
-        }
+          response: { use: responseInterceptorUseMock },
+        },
       })),
-      isAxiosError: actual.default.isAxiosError
-    }
+      isAxiosError: actual.default.isAxiosError,
+    },
   };
 });
 
@@ -27,35 +27,29 @@ import { HttpClient } from "../../../src/infraestructure/http/http-client";
 import { ILogger } from "../../../src/domain/interfaces/logger.interface";
 
 describe("HttpClient", () => {
-
   let loggerMock: ILogger;
   let httpClient: HttpClient;
 
   beforeEach(() => {
-
     vi.clearAllMocks();
 
     loggerMock = {
       info: vi.fn(),
-      error: vi.fn()
+      error: vi.fn(),
     } as unknown as ILogger;
 
     httpClient = new HttpClient(loggerMock);
-
-
   });
 
   it("should initialize axios with timeout", () => {
-
     expect(axios.create).toHaveBeenCalled();
   });
 
   it("should call axios request with correct config", async () => {
-
     const fakeResponse = {
       data: { name: "pikachu" },
       status: 200,
-      headers: {}
+      headers: {},
     };
 
     requestMock.mockResolvedValueOnce(fakeResponse);
@@ -66,7 +60,7 @@ describe("HttpClient", () => {
       pathParams: { name: "pikachu" },
       queryParams: { test: "1" },
       headers: { Authorization: "Bearer token" },
-      timeoutMs: 3000
+      timeoutMs: 3000,
     });
 
     expect(requestMock).toHaveBeenCalledWith({
@@ -77,40 +71,38 @@ describe("HttpClient", () => {
       timeout: 3000,
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer token"
-      }
+        Authorization: "Bearer token",
+      },
     });
 
     expect(result).toEqual({
       data: { name: "pikachu" },
       status: 200,
-      headers: {}
+      headers: {},
     });
   });
 
   it("should encode path params correctly", async () => {
-
     requestMock.mockResolvedValueOnce({
       data: {},
       status: 200,
-      headers: {}
+      headers: {},
     });
 
     await httpClient.request({
       method: "GET",
       path: "/pokemon/:name",
-      pathParams: { name: "mr mime" }
+      pathParams: { name: "mr mime" },
     });
 
     expect(requestMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: "/pokemon/mr%20mime"
-      })
+        url: "/pokemon/mr%20mime",
+      }),
     );
   });
 
   it("should throw axios error when axios fails", async () => {
-
     const axiosError = new Error("Unexpected HTTP client error");
 
     requestMock.mockRejectedValueOnce(axiosError);
@@ -118,21 +110,19 @@ describe("HttpClient", () => {
     await expect(
       httpClient.request({
         method: "GET",
-        path: "/test"
-      })
+        path: "/test",
+      }),
     ).rejects.toThrow("Unexpected HTTP client error");
   });
 
   it("should throw generic error when unknown error occurs", async () => {
-
     requestMock.mockRejectedValueOnce("unexpected");
 
     await expect(
       httpClient.request({
         method: "GET",
-        path: "/test"
-      })
+        path: "/test",
+      }),
     ).rejects.toThrow("Unexpected HTTP client error");
   });
-
 });

@@ -4,12 +4,14 @@ import { UsersController } from "../../../controllers/v1/users.controller";
 import { authenticateJWT } from "../../middlewares/auth.middleware";
 import { authorizeScopes } from "../../middlewares/scope.middleware";
 import { validate } from "../../middlewares/validate.middleware";
-import { getUsersResonseSchema, 
-  loginUserRequestSchema, 
-  loginUserResponseSchema, 
-  meUserResponseSchema, 
-  registerUserRequestSchema, 
-  registerUserResponseSchema } from "../../../schemas/user.schema";
+import {
+  getUsersResonseSchema,
+  loginUserRequestSchema,
+  loginUserResponseSchema,
+  meUserResponseSchema,
+  registerUserRequestSchema,
+  registerUserResponseSchema,
+} from "../../../schemas/user.schema";
 import { registerRoute } from "../../../docs/route-builder";
 import { registry } from "../../../docs/registry";
 
@@ -21,13 +23,12 @@ registerRoute(router, registry, {
   swaggerPath: "/v1/users",
   tag: "Users",
   responseSchema: getUsersResonseSchema,
-  middlewares: [authenticateJWT,
-    authorizeScopes(["user"])
-  ],
+  middlewares: [authenticateJWT, authorizeScopes(["user"])],
   isProtected: true,
   handler: async (req, res) => {
     const controller = container.resolve<UsersController>("usersController");
-    return controller.getUsers(req, res);}
+    return controller.getUsers(req, res);
+  },
 });
 
 registerRoute(router, registry, {
@@ -38,12 +39,12 @@ registerRoute(router, registry, {
   bodySchema: registerUserRequestSchema,
   responseSchema: registerUserResponseSchema,
   isProtected: false,
-  middlewares: [validate({body:registerUserRequestSchema})],
+  middlewares: [validate({ body: registerUserRequestSchema })],
   handler: async (req, res) => {
     const controller = container.resolve<UsersController>("usersController");
-    return controller.register(req, res)
-  }
-})
+    return controller.register(req, res);
+  },
+});
 
 registerRoute(router, registry, {
   method: "post",
@@ -53,12 +54,12 @@ registerRoute(router, registry, {
   bodySchema: loginUserRequestSchema,
   responseSchema: loginUserResponseSchema,
   isProtected: false,
-  middlewares: [validate({body:loginUserRequestSchema})],
+  middlewares: [validate({ body: loginUserRequestSchema })],
   handler: async (req, res) => {
     const controller = container.resolve<UsersController>("usersController");
-    return controller.login(req, res)
-  }
-})
+    return controller.login(req, res);
+  },
+});
 
 registerRoute(router, registry, {
   method: "get",
@@ -67,13 +68,11 @@ registerRoute(router, registry, {
   tag: "Users",
   responseSchema: meUserResponseSchema,
   isProtected: true,
-  middlewares: [authenticateJWT,
-    authorizeScopes(["user"])
-  ],
+  middlewares: [authenticateJWT, authorizeScopes(["user"])],
   handler: async (req, res) => {
     const controller = container.resolve<UsersController>("usersController");
-    return controller.getMe(req, res)
-  }
-})
+    return controller.getMe(req, res);
+  },
+});
 
 export default router;

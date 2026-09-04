@@ -1,5 +1,4 @@
 export class User {
-
   constructor(
     public readonly documentType: "CC" | "CE" | "NIT" | "PT",
     public readonly documentNumber: string,
@@ -8,7 +7,7 @@ export class User {
     public readonly phone: string | null,
     public readonly passwordHash: string,
     public readonly hasPin: boolean = false,
-    public readonly status: boolean = true
+    public readonly status: boolean = true,
   ) {}
 
   toPersistence() {
@@ -20,8 +19,7 @@ export class User {
       phone: this.phone,
       password_hash: this.passwordHash,
       has_pin: this.hasPin,
-      status: this.status
+      status: this.status,
     };
   }
-
 }

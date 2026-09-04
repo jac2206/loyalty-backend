@@ -3,9 +3,7 @@ import { User } from "../../../domain/entities/user.entity";
 import { IUserRepository } from "../../../domain/interfaces/repositories/user.repository.interface";
 
 export class UserRepository implements IUserRepository {
-
   async save(entity: User): Promise<User> {
-
     const data = entity.toPersistence();
 
     const result = await pool.query(
@@ -21,8 +19,8 @@ export class UserRepository implements IUserRepository {
         data.phone,
         data.password_hash,
         data.has_pin,
-        data.status
-      ]
+        data.status,
+      ],
     );
 
     const row = result.rows[0];
@@ -35,15 +33,35 @@ export class UserRepository implements IUserRepository {
       row.phone,
       row.password_hash,
       row.has_pin,
-      row.status
+      row.status,
     );
   }
 
   async findByEmail(email: string): Promise<User | null> {
+    const result = await pool.query(`SELECT * FROM loyalty.users WHERE email = $1`, [
+      email,
+    ]);
 
+    if (result.rows.length === 0) return null;
+
+    const row = result.rows[0];
+
+    return new User(
+      row.document_type,
+      row.document_number,
+      row.full_name,
+      row.email,
+      row.phone,
+      row.password_hash,
+      row.has_pin,
+      row.status,
+    );
+  }
+
+  async findByDocument(documentNumber: string): Promise<User | null> {
     const result = await pool.query(
-      `SELECT * FROM loyalty.users WHERE email = $1`,
-      [email]
+      `SELECT * FROM loyalty.users WHERE document_number = $1`,
+      [documentNumber],
     );
 
     if (result.rows.length === 0) return null;
@@ -58,35 +76,11 @@ export class UserRepository implements IUserRepository {
       row.phone,
       row.password_hash,
       row.has_pin,
-      row.status
-    );
-  }
-
-  async findByDocument(documentNumber: string): Promise<User | null> {
-
-    const result = await pool.query(
-        `SELECT * FROM loyalty.users WHERE document_number = $1`,
-        [documentNumber]
-    );
-
-    if (result.rows.length === 0) return null;
-
-    const row = result.rows[0];
-
-    return new User(
-        row.document_type,
-        row.document_number,
-        row.full_name,
-        row.email,
-        row.phone,
-        row.password_hash,
-        row.has_pin,
-        row.status
+      row.status,
     );
   }
 
   async findAll(): Promise<User[]> {
-
     const result = await pool.query(`
       SELECT 
         document_type,
@@ -98,20 +92,20 @@ export class UserRepository implements IUserRepository {
         has_pin,
         status
       FROM loyalty.users
-    `)
+    `);
 
-    return result.rows.map(row =>
-      new User(
-        row.document_type,
-        row.document_number,
-        row.full_name,
-        row.email,
-        row.phone,
-        row.password_hash,
-        row.has_pin,
-        row.status
-      )
-    )
+    return result.rows.map(
+      (row) =>
+        new User(
+          row.document_type,
+          row.document_number,
+          row.full_name,
+          row.email,
+          row.phone,
+          row.password_hash,
+          row.has_pin,
+          row.status,
+        ),
+    );
   }
-
 }

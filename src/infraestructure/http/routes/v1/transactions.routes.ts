@@ -1,14 +1,22 @@
-import { Router } from "express"
-import { container } from "../../../../config/container"
-import { TransactionsController } from "../../../controllers/v1/transactions.controller"
-import { authenticateJWT } from "../../middlewares/auth.middleware"
-import { authorizeScopes } from "../../middlewares/scope.middleware"
-import { accumulateRequestSchema, accumulateResponseSchema, redeemeResponseSchema, redeemRequestSchema, transactionParamsSchema, transactionsQuerySchema, transactionsResponseSchema } from "../../../schemas/transaction.schema"
-import { validate } from "../../middlewares/validate.middleware"
-import { registry } from "../../../docs/registry"
-import { registerRoute } from "../../../docs/route-builder"
+import { Router } from "express";
+import { container } from "../../../../config/container";
+import { TransactionsController } from "../../../controllers/v1/transactions.controller";
+import { authenticateJWT } from "../../middlewares/auth.middleware";
+import { authorizeScopes } from "../../middlewares/scope.middleware";
+import {
+  accumulateRequestSchema,
+  accumulateResponseSchema,
+  redeemeResponseSchema,
+  redeemRequestSchema,
+  transactionParamsSchema,
+  transactionsQuerySchema,
+  transactionsResponseSchema,
+} from "../../../schemas/transaction.schema";
+import { validate } from "../../middlewares/validate.middleware";
+import { registry } from "../../../docs/registry";
+import { registerRoute } from "../../../docs/route-builder";
 
-const router = Router()
+const router = Router();
 
 registerRoute(router, registry, {
   method: "get",
@@ -20,15 +28,17 @@ registerRoute(router, registry, {
   responseSchema: transactionsResponseSchema,
   isProtected: true,
   middlewares: [
-    validate({params: transactionParamsSchema}),
+    validate({ params: transactionParamsSchema }),
     authenticateJWT,
-    authorizeScopes(["user"])
+    authorizeScopes(["user"]),
   ],
   handler: async (req, res) => {
-    const controller = container.resolve<TransactionsController>("transactionsController");
+    const controller = container.resolve<TransactionsController>(
+      "transactionsController",
+    );
     return controller.getTransactions(req, res);
-  }
-})
+  },
+});
 
 registerRoute(router, registry, {
   method: "post",
@@ -39,15 +49,17 @@ registerRoute(router, registry, {
   responseSchema: accumulateResponseSchema,
   isProtected: true,
   middlewares: [
-    validate({body:accumulateRequestSchema}),
+    validate({ body: accumulateRequestSchema }),
     authenticateJWT,
-    authorizeScopes(["user"])
+    authorizeScopes(["user"]),
   ],
   handler: async (req, res) => {
-    const controller = container.resolve<TransactionsController>("transactionsController");
+    const controller = container.resolve<TransactionsController>(
+      "transactionsController",
+    );
     return controller.accumulate(req, res);
-  }
-})
+  },
+});
 
 registerRoute(router, registry, {
   method: "post",
@@ -58,14 +70,16 @@ registerRoute(router, registry, {
   responseSchema: redeemeResponseSchema,
   isProtected: true,
   middlewares: [
-    validate({body:redeemRequestSchema}),
+    validate({ body: redeemRequestSchema }),
     authenticateJWT,
-    authorizeScopes(["user"])
+    authorizeScopes(["user"]),
   ],
   handler: async (req, res) => {
-    const controller = container.resolve<TransactionsController>("transactionsController");
+    const controller = container.resolve<TransactionsController>(
+      "transactionsController",
+    );
     return controller.redeem(req, res);
-  }
-})
+  },
+});
 
-export default router
+export default router;

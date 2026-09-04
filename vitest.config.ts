@@ -21,9 +21,13 @@ export default defineConfig({
         "**/domain/entities/**",
         "**/infraestructure/logger/**",
         "**/types/**",
+        "**/infraestructure/docs/**",
+        "**/infraestructure/http/routes/**",
+        "**/infraestructure/http/schemas/**",
+        "**/infraestructure/schemas/**",
         "src/main.ts",
-        "src/server.ts"
-      ]
-    }
-  }
+        "src/server.ts",
+      ],
+    },
+  },
 });

@@ -5,14 +5,14 @@ import { IAuthService } from "../../../domain/interfaces/services/auth.service.i
 export const authenticateJWT = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
     res.status(401).json({
       code: "UNAUTHORIZED",
-      message: "Missing token"
+      message: "Missing token",
     });
     return;
   }
@@ -29,7 +29,7 @@ export const authenticateJWT = (
   } catch {
     res.status(401).json({
       code: "INVALID_TOKEN",
-      message: "Token invalid or expired"
+      message: "Token invalid or expired",
     });
   }
 };

@@ -5,31 +5,28 @@ import { DomainErrors } from "../../../../src/domain/errors/domain-errors";
 import { ILogger } from "../../../../src/domain/interfaces/logger.interface";
 
 describe("UpdateGenericUseCase", () => {
-
   let loggerMock: ILogger;
   let useCase: UpdateGenericUseCase;
 
   beforeEach(() => {
-
     // ============================
     // MOCK - LOGGER
     // ============================
     loggerMock = {
-      info: vi.fn(),   // mock function
-      error: vi.fn?.() 
+      info: vi.fn(), // mock function
+      error: vi.fn?.(),
     } as unknown as ILogger;
 
     useCase = new UpdateGenericUseCase(loggerMock);
   });
 
   it("should update generic successfully and return data with id", async () => {
-
     const id = "123";
 
     const request = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     // ============================
@@ -45,7 +42,7 @@ describe("UpdateGenericUseCase", () => {
       id: "123",
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     });
 
     // Logger fue llamado
@@ -55,7 +52,7 @@ describe("UpdateGenericUseCase", () => {
     expect(loggerMock.info).toHaveBeenCalledWith(
       "CreateGenericUseCase",
       "Starting create generic",
-      request
+      request,
     );
 
     // Se llamó solo una vez
@@ -63,14 +60,13 @@ describe("UpdateGenericUseCase", () => {
   });
 
   it("should throw DomainException when id is missing", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
     const request = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     const expectedError = DomainErrors.GENERIC_ID_REQUIRED;
@@ -79,14 +75,11 @@ describe("UpdateGenericUseCase", () => {
     // AAA - ACT & ASSERT
     // ============================
 
-    await expect(useCase.execute(request, ""))
-      .rejects
-      .toBeInstanceOf(DomainException);
+    await expect(useCase.execute(request, "")).rejects.toBeInstanceOf(DomainException);
 
     try {
       await useCase.execute(request, "");
     } catch (error: any) {
-
       // ============================
       // AAA - ASSERT
       // ============================
@@ -98,7 +91,6 @@ describe("UpdateGenericUseCase", () => {
   });
 
   it("should throw DomainException when name is invalid", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
@@ -107,7 +99,7 @@ describe("UpdateGenericUseCase", () => {
     const request = {
       name: "Jo", // menos de 3 caracteres
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     const expectedError = DomainErrors.GENERIC_INVALID_NAME;
@@ -116,14 +108,11 @@ describe("UpdateGenericUseCase", () => {
     // AAA - ACT & ASSERT
     // ============================
 
-    await expect(useCase.execute(request, id))
-      .rejects
-      .toBeInstanceOf(DomainException);
+    await expect(useCase.execute(request, id)).rejects.toBeInstanceOf(DomainException);
 
     try {
       await useCase.execute(request, id);
     } catch (error: any) {
-
       // ============================
       // AAA - ASSERT
       // ============================
@@ -135,7 +124,6 @@ describe("UpdateGenericUseCase", () => {
   });
 
   it("should call logger once (SPY example)", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
@@ -145,7 +133,7 @@ describe("UpdateGenericUseCase", () => {
     const request = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     // ============================
@@ -159,5 +147,4 @@ describe("UpdateGenericUseCase", () => {
 
     expect(spy).toHaveBeenCalledTimes(1);
   });
-
 });

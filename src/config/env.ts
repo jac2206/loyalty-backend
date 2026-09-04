@@ -12,9 +12,9 @@ export const env = {
   logLevel: process.env.LOG_LEVEL || "info",
   jwtSecret: process.env.JWT_SECRET || "secret",
   dataBase: {
-    dataBaseUrl: process.env.DATABASE_URL
+    dataBaseUrl: process.env.DATABASE_URL,
   },
   httpConfig: {
     timeOut: process.env.HTTP_TIME_OUT ? Number(process.env.HTTP_TIME_OUT) : 20000,
-  }
+  },
 };

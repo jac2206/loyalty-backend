@@ -3,24 +3,17 @@ import { IGetBalanceUseCase } from "../../../domain/interfaces/use-cases/account
 import { GetBalanceResponseDTO } from "../../../application/dto/get-balance.dto";
 
 export class AccountsController {
-
-  constructor(
-    private readonly getBalanceUseCase: IGetBalanceUseCase
-  ) {}
+  constructor(private readonly getBalanceUseCase: IGetBalanceUseCase) {}
 
   getBalance = async (
     req: Request,
-    res: Response<GetBalanceResponseDTO>
+    res: Response<GetBalanceResponseDTO>,
   ): Promise<void> => {
     const { documentType, documentNumber } = req.params as {
       documentType: string;
       documentNumber: string;
     };
-    const result = await this.getBalanceUseCase.execute(
-      documentType,
-      documentNumber
-    );
+    const result = await this.getBalanceUseCase.execute(documentType, documentNumber);
     res.status(200).json(result);
   };
-
 }

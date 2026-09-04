@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GenericController } from "../../../../src/infraestructure/controllers/v1/generic.controller";
 
 describe("GenericController", () => {
-
   // ============================================
   // Mocks de todos los Use Cases
   // ============================================
@@ -20,17 +19,16 @@ describe("GenericController", () => {
   // ============================================
   const mockResponse = () => {
     const res: any = {};
-    
+
     // Simulamos encadenamiento tipo:
     // res.status(200).json(...)
     res.status = vi.fn().mockReturnValue(res);
     res.json = vi.fn().mockReturnValue(res);
-    
+
     return res;
   };
 
   beforeEach(() => {
-
     // Creamos mocks simples con execute()
     getGenericUseCaseMock = { execute: vi.fn() };
     createGenericUseCaseMock = { execute: vi.fn() };
@@ -44,7 +42,7 @@ describe("GenericController", () => {
       createGenericUseCaseMock,
       updateGenericUseCaseMock,
       getXIdGenericUseCaseMock,
-      getPokemonXNameUseCaseMock
+      getPokemonXNameUseCaseMock,
     );
   });
 
@@ -53,14 +51,13 @@ describe("GenericController", () => {
   // =====================================================
 
   it("should return generic data", async () => {
-
     // ============================
     // 🟢 AAA - ARRANGE
     // ============================
     const fakeResult = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     getGenericUseCaseMock.execute.mockResolvedValue(fakeResult);
@@ -92,14 +89,13 @@ describe("GenericController", () => {
   // =====================================================
 
   it("should create generic", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
     const requestBody = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     createGenericUseCaseMock.execute.mockResolvedValue(requestBody);
@@ -117,8 +113,7 @@ describe("GenericController", () => {
     // ============================
 
     // Se llama el use case con el body
-    expect(createGenericUseCaseMock.execute)
-      .toHaveBeenCalledWith(requestBody);
+    expect(createGenericUseCaseMock.execute).toHaveBeenCalledWith(requestBody);
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(requestBody);
@@ -129,14 +124,13 @@ describe("GenericController", () => {
   // =====================================================
 
   it("should return generic by id", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
     const fakeResult = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     getXIdGenericUseCaseMock.execute.mockResolvedValue(fakeResult);
@@ -153,8 +147,7 @@ describe("GenericController", () => {
     // AAA - ASSERT
     // ============================
 
-    expect(getXIdGenericUseCaseMock.execute)
-      .toHaveBeenCalledWith("123");
+    expect(getXIdGenericUseCaseMock.execute).toHaveBeenCalledWith("123");
 
     expect(res.status).toHaveBeenCalledWith(200);
 
@@ -166,18 +159,16 @@ describe("GenericController", () => {
   // =====================================================
 
   it("should return pokemon by name", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
     const fakePokemon = {
       name: "pikachu",
       height: 4,
-      weight: 60
+      weight: 60,
     };
 
-    getPokemonXNameUseCaseMock.execute
-      .mockResolvedValue(fakePokemon);
+    getPokemonXNameUseCaseMock.execute.mockResolvedValue(fakePokemon);
 
     const req: any = { params: { name: "pikachu" } };
     const res = mockResponse();
@@ -191,8 +182,7 @@ describe("GenericController", () => {
     // AAA - ASSERT
     // ============================
 
-    expect(getPokemonXNameUseCaseMock.execute)
-      .toHaveBeenCalledWith("pikachu");
+    expect(getPokemonXNameUseCaseMock.execute).toHaveBeenCalledWith("pikachu");
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(fakePokemon);
@@ -203,29 +193,27 @@ describe("GenericController", () => {
   // =====================================================
 
   it("should update generic", async () => {
-
     // ============================
     // AAA - ARRANGE
     // ============================
     const requestBody = {
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
     const fakeUpdateResult = {
       id: "123",
       name: "Julian",
       lastName: "Arango",
-      age: 32
+      age: 32,
     };
 
-    updateGenericUseCaseMock.execute
-      .mockResolvedValue(fakeUpdateResult);
+    updateGenericUseCaseMock.execute.mockResolvedValue(fakeUpdateResult);
 
     const req: any = {
       body: requestBody,
-      params: { id: "123" }
+      params: { id: "123" },
     };
 
     const res = mockResponse();
@@ -239,15 +227,13 @@ describe("GenericController", () => {
     // AAA - ASSERT
     // ============================
 
-    expect(updateGenericUseCaseMock.execute)
-      .toHaveBeenCalledWith(requestBody, "123");
+    expect(updateGenericUseCaseMock.execute).toHaveBeenCalledWith(requestBody, "123");
 
     expect(res.status).toHaveBeenCalledWith(200);
 
     expect(res.json).toHaveBeenCalledWith({
       message: "PATCH request received",
-      result: fakeUpdateResult
+      result: fakeUpdateResult,
     });
   });
-
 });
