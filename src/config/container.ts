@@ -27,6 +27,7 @@ import { TransactionRepository } from "../infraestructure/database/repositories/
 import { AccumulatePointsUseCase } from "../application/use-cases/transactions/accumulate-points.usecase";
 import { RedeemPointsUseCase } from "../application/use-cases/transactions/redeem-points.usecase";
 import { GetAllUsersUseCase } from "../application/use-cases/users/get-all-users.usecase";
+import { UpdateUserUseCase } from "../application/use-cases/users/update-user.usecase";
 
 export const container = createContainer({
   injectionMode: InjectionMode.CLASSIC,
@@ -47,6 +48,7 @@ container.register({
   accumulatePointsUseCase: asClass(AccumulatePointsUseCase).scoped(),
   redeemPointsUseCase: asClass(RedeemPointsUseCase).scoped(),
   getAllUsersUseCase: asClass(GetAllUsersUseCase).scoped(),
+  updateUserUseCase: asClass(UpdateUserUseCase).scoped(),
 
   // Services
   healthService: asClass(HealthService).singleton(),

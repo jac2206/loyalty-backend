@@ -23,6 +23,25 @@ Registrar usuarios y emitir JWT para acceder a recursos protegidos.
 | Login | `POST /loyalty/v1/users/login` | Pública | 200, token |
 | Perfil | `GET /loyalty/v1/users/me` | JWT + `user` | 200, datos públicos |
 | Listar | `GET /loyalty/v1/users` | JWT + `user` | 200, usuarios públicos |
+| Actualizar perfil | `PATCH /loyalty/v1/users/:documentNumber` | JWT + `user`, el documento debe coincidir con `sub` | 200, perfil actualizado |
+
+## Actualizar perfil de usuario
+
+- El body requiere `email` válido y `fullName` de al menos 3 caracteres.
+- El usuario se localiza por `documentNumber`; el documento es inmutable.
+- Solo se actualizan el correo y el nombre completo del usuario autenticado.
+- El correo puede conservar el actual, pero no puede pertenecer a otro usuario.
+- Un usuario inexistente devuelve 404 `USER_NOT_FOUND`; un correo usado por otro usuario devuelve 409 `USER_EMAIL_ALREADY_EXISTS`.
+- Un documento de ruta distinto del `sub` del JWT devuelve 403 `USER_DOCUMENT_MISMATCH`.
+
+### Aceptación de actualización
+
+- Dado un usuario existente y un correo disponible, se persisten correo y nombre completo y se responde 200 con los datos públicos actualizados.
+- Dado el mismo correo actualmente asociado al usuario, la actualización se permite.
+- Dado un correo asociado a otro usuario, se responde 409 y no se modifica el usuario.
+- Dado un documento inexistente, se responde 404 y no se modifica ningún usuario.
+- Dado un documento diferente al del token, se responde 403 sin consultar ni modificar el repositorio.
+- El endpoint requiere autenticación JWT y scope `user`.
 
 ## Aceptación
 

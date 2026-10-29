@@ -13,6 +13,11 @@ import { ILoginUserUseCase } from "../../../domain/interfaces/use-cases/users/lo
 import { IGetMeUseCase } from "../../../domain/interfaces/use-cases/users/get-me.usecase.interface";
 import { GetUsersResponseDTO } from "../../../application/dto/get-users.dto";
 import { IGetAllUsersUseCase } from "../../../domain/interfaces/use-cases/users/get-all-users.usecase.interface";
+import { IUpdateUserUseCase } from "../../../domain/interfaces/use-cases/users/update-user.usecase.interface";
+import {
+  UpdateUserRequestDTO,
+  UpdateUserResponseDTO,
+} from "../../../application/dto/update-user.dto";
 
 export class UsersController {
   constructor(
@@ -20,6 +25,7 @@ export class UsersController {
     private readonly loginUserUseCase: ILoginUserUseCase,
     private readonly getMeUseCase: IGetMeUseCase,
     private readonly getAllUsersUseCase: IGetAllUsersUseCase,
+    private readonly updateUserUseCase: IUpdateUserUseCase,
   ) {}
 
   getUsers = async (
@@ -47,6 +53,19 @@ export class UsersController {
   getMe = async (req: Request, res: Response<GetMeResponseDTO>): Promise<void> => {
     const userId = (req as any).user.sub;
     const result = await this.getMeUseCase.execute(userId);
+    res.status(200).json(result);
+  };
+
+  update = async (
+    req: Request,
+    res: Response<UpdateUserResponseDTO>,
+  ): Promise<void> => {
+    const authenticatedDocumentNumber = req.user?.sub ?? "";
+    const result = await this.updateUserUseCase.execute(
+      req.params.documentNumber as string,
+      authenticatedDocumentNumber,
+      req.body as UpdateUserRequestDTO,
+    );
     res.status(200).json(result);
   };
 }

@@ -47,8 +47,26 @@ export const meUserResponseSchema = z.object({
   documentNumber: z.string(),
   fullName: z.string(),
   email: z.string(),
-  phone: z.string(),
+  phone: z.string().nullable(),
 });
+
+export const updateUserParamsSchema = z.object({
+  documentNumber: z.string().min(5),
+});
+
+export const updateUserRequestSchema = z
+  .object({
+    fullName: z.string().min(3),
+    email: z.string().email(),
+  })
+  .openapi({
+    example: {
+      fullName: "Ada Lovelace",
+      email: "ada@example.com",
+    },
+  });
+
+export const updateUserResponseSchema = meUserResponseSchema;
 
 export const getUsersResonseSchema = z.object({
   documentType: z.string(),
