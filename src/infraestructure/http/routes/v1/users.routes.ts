@@ -11,11 +11,61 @@ import {
   meUserResponseSchema,
   registerUserRequestSchema,
   registerUserResponseSchema,
+  updateUserParamsSchema,
+  updateUserRequestSchema,
+  updateUserResponseSchema,
 } from "../../../schemas/user.schema";
 import { registerRoute } from "../../../docs/route-builder";
 import { registry } from "../../../docs/registry";
+import { errorResponseSchema } from "../../../schemas/error.schema";
 
 const router = Router();
+
+registerRoute(router, registry, {
+  method: "patch",
+  path: "/:documentNumber",
+  swaggerPath: "/v1/users/{documentNumber}",
+  tag: "Users",
+  paramsSchema: updateUserParamsSchema,
+  bodySchema: updateUserRequestSchema,
+  responseSchema: updateUserResponseSchema,
+  isProtected: true,
+  middlewares: [
+    authenticateJWT,
+    authorizeScopes(["user"]),
+    validate({ params: updateUserParamsSchema, body: updateUserRequestSchema }),
+  ],
+  customResponses: {
+    403: {
+      description: "The document number does not match the authenticated user",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    404: {
+      description: "User not found",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+    409: {
+      description: "Email already registered",
+      content: {
+        "application/json": {
+          schema: errorResponseSchema,
+        },
+      },
+    },
+  },
+  handler: async (req, res) => {
+    const controller = container.resolve<UsersController>("usersController");
+    return controller.update(req, res);
+  },
+});
 
 registerRoute(router, registry, {
   method: "get",

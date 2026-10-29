@@ -22,4 +22,10 @@ export const UserErrors = {
     message: "Password must contain uppercase letter, number and 8 characters",
     statusCode: 422,
   },
+
+  USER_DOCUMENT_MISMATCH: {
+    code: "USER_DOCUMENT_MISMATCH",
+    message: "The document number does not match the authenticated user",
+    statusCode: 403,
+  },
 };
