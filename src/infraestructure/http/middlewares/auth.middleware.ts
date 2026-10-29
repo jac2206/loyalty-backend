@@ -23,7 +23,7 @@ export const authenticateJWT = (
     const authService = container.resolve<IAuthService>("authService");
     const decoded = authService.verifyToken(token);
 
-    (req as any).user = decoded;
+    req.user = decoded;
 
     next();
   } catch {

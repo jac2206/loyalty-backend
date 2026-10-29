@@ -80,6 +80,34 @@ export class UserRepository implements IUserRepository {
     );
   }
 
+  async updateProfile(
+    documentNumber: string,
+    email: string,
+    fullName: string,
+  ): Promise<User | null> {
+    const result = await pool.query(
+      `UPDATE loyalty.users
+       SET email = $2, full_name = $3
+       WHERE document_number = $1
+       RETURNING *`,
+      [documentNumber, email, fullName],
+    );
+
+    if (result.rows.length === 0) return null;
+
+    const row = result.rows[0];
+    return new User(
+      row.document_type,
+      row.document_number,
+      row.full_name,
+      row.email,
+      row.phone,
+      row.password_hash,
+      row.has_pin,
+      row.status,
+    );
+  }
+
   async findAll(): Promise<User[]> {
     const result = await pool.query(`
       SELECT 
