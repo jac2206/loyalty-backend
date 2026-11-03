@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "running",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-11-03T05:01:17.527Z",
+  "specification": {
+    "path": "D:\\Codigos\\expressTS\\loyalty-backend\\.archify\\architecture-system-20261103-000049\\candidate.json",
+    "sha256": "189fae50f97eafb3cc04d0026ee8cd2533d29f6dd71a399a9bfb56fd6b235030",
+    "bytes": 6161
+  },
+  "artifact": {
+    "path": "D:\\Codigos\\expressTS\\loyalty-backend\\docs\\architecture\\general-architecture.html"
+  },
+  "stages": {},
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "D:\\Codigos\\expressTS\\loyalty-backend\\docs\\architecture\\general-architecture.finalize.json",
+    "summaryReceipt": "D:\\Codigos\\expressTS\\loyalty-backend\\docs\\architecture\\general-architecture.finalize-summary.json"
+  },
+  "visualReview": "not-requested"
+}

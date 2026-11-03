@@ -1,6 +1,190 @@
-# 🧱 Express TS Chasis
+# Loyalty Backend
 
-## 🚀 DDD + Arquitectura Hexagonal + Awilix + Vitest + Biome + Husky + Commitlint + Winston
+## API de fidelización con Express 5, TypeScript y PostgreSQL
+
+API HTTP para registrar usuarios y administrar cuentas de puntos: consultar saldo, acumular y redimir puntos, y consultar transacciones. Usa arquitectura por capas, autenticación JWT y documentación OpenAPI.
+
+**Tecnologías:** Node.js, Express 5, TypeScript, PostgreSQL (`pg`), Awilix, Zod, JWT, bcrypt, Winston y Vitest.
+
+---
+
+# 1. Arquitectura
+
+```mermaid
+flowchart TD
+    Cliente[Cliente HTTP]
+
+    subgraph API[API Express]
+        Rutas[Rutas versionadas]
+        Middleware[Validación Zod y JWT]
+        Controlador[Controladores]
+    end
+
+    subgraph Aplicacion[Aplicación y dominio]
+        CasoUso[Casos de uso]
+        Contratos[Entidades e interfaces de dominio]
+    end
+
+    subgraph Infraestructura[Infraestructura]
+        Repositorio[Repositorios PostgreSQL]
+        Adaptador[Adaptador PokeAPI]
+    end
+
+    BaseDatos[(PostgreSQL)]
+    PokeAPI[API externa PokeAPI]
+
+    Cliente --> Rutas --> Middleware --> Controlador --> CasoUso
+    CasoUso --> Contratos
+    Contratos --> Repositorio --> BaseDatos
+    Contratos --> Adaptador --> PokeAPI
+    CasoUso -. respuesta .-> Controlador
+    Controlador -. respuesta HTTP .-> Cliente
+```
+
+Las flechas sólidas muestran el recorrido de una solicitud y sus dependencias. Las punteadas muestran el retorno de la respuesta. Awilix conecta las implementaciones con los contratos del dominio.
+
+# 2. Capas del proyecto
+
+- **Domain:** entidades, interfaces, errores y excepciones.
+- **Application:** casos de uso para usuarios, cuentas y transacciones, además de DTOs.
+- **Infrastructure:** rutas, controladores, validaciones Zod, JWT, repositorios, logger y OpenAPI.
+- **Config:** entorno e inyección de dependencias.
+
+El módulo `generic` y la consulta de Pokémon son funcionalidades de ejemplo presentes en el código.
+
+# 3. Manejo de errores
+
+Las rutas principales validan entradas con Zod. Las excepciones de dominio conservan código, mensaje y estado HTTP; los errores inesperados responden 500 y las rutas inexistentes responden 404.
+
+# 4. Logging
+
+Winston proporciona el logger de infraestructura. El nivel se configura con `LOG_LEVEL` (predeterminado: `info`).
+
+# 5. Variables de entorno
+
+Crea `.env` en la raíz del proyecto:
+
+```env
+PORT=3000
+NODE_ENV=development
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/loyalty
+JWT_SECRET=cambia-este-secreto
+LOG_LEVEL=info
+SHOW_ENV=false
+HTTP_TIME_OUT=20000
+```
+
+`DATABASE_URL` debe apuntar a PostgreSQL con el esquema `loyalty` y las tablas requeridas por la aplicación. Usa secretos seguros en producción.
+
+# 6. Inyección de dependencias
+
+Awilix registra casos de uso, repositorios, servicios y controladores en `src/config/container.ts`. Los repositorios implementan contratos declarados por el dominio.
+
+# 7. Instalación y ejecución
+
+Requisitos: Node.js, npm y PostgreSQL configurado.
+
+```bash
+npm install
+npm run dev
+```
+
+El servidor usa el puerto `3000` por defecto. Para compilar y ejecutar:
+
+```bash
+npm run build
+npm start
+```
+
+# 8. Scripts disponibles
+
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo con recarga. |
+| `npm run build` | Compila TypeScript en `dist`. |
+| `npm start` | Inicia la aplicación compilada. |
+| `npm run test:run` | Ejecuta Vitest una vez. |
+| `npm run test:coverage` | Ejecuta Vitest con cobertura. |
+| `npm run check` | Ejecuta comprobaciones de Biome. |
+| `npm run format` | Formatea archivos con Biome. |
+| `npm run format:check` | Comprueba formato con Biome. |
+
+# 9. Pruebas
+
+El proyecto usa Vitest y Supertest. Ejecuta `npm run test:run`; para cobertura usa `npm run test:coverage`.
+
+# 10. Git Hooks
+
+Husky ejecuta los hooks configurados en `.husky`. Consulta esos archivos para ver las validaciones activas antes de cada commit.
+
+# 11. Conventional Commits
+
+Commitlint valida los mensajes con la configuración convencional del proyecto. Ejemplos: `feat: add points redemption`, `fix: validate user token`, `docs: update API guide`.
+
+# 12. Flujo de una solicitud
+
+1. Express recibe la solicitud bajo `/loyalty`.
+2. La ruta valida la entrada y, cuando corresponde, comprueba JWT y scope.
+3. El controlador llama al caso de uso.
+4. El caso de uso opera mediante interfaces del dominio.
+5. Repositorios y adaptadores acceden a PostgreSQL o servicios externos.
+6. El controlador devuelve la respuesta; el middleware centraliza errores.
+
+# 13. Estructura del proyecto
+
+```text
+src/
+├── application/ (dto, use-cases)
+├── config/
+├── domain/ (entities, errors, exceptions, interfaces)
+├── infraestructure/
+│   ├── controllers/
+│   ├── database/repositories/
+│   ├── docs/
+│   ├── http/routes y middlewares/
+│   ├── logger/
+│   └── security/
+├── main.ts
+└── server.ts
+
+docs/
+├── main.md
+└── use-cases/
+```
+
+# 14. Endpoints principales
+
+Las rutas de negocio usan el prefijo `/loyalty/v1`.
+
+| Método | Ruta | Acceso | Descripción |
+| --- | --- | --- | --- |
+| `GET` | `/loyalty/health` | Público | Estado del servicio. |
+| `POST` | `/loyalty/v1/users/register` | Público | Registrar usuario. |
+| `POST` | `/loyalty/v1/users/login` | Público | Iniciar sesión y obtener JWT. |
+| `GET` | `/loyalty/v1/users/me` | JWT | Consultar perfil propio. |
+| `GET` | `/loyalty/v1/users` | JWT | Listar usuarios. |
+| `PATCH` | `/loyalty/v1/users/:documentNumber` | JWT | Actualizar perfil. |
+| `GET` | `/loyalty/v1/accounts/balance/:documentType/:documentNumber` | JWT | Consultar saldo. |
+| `POST` | `/loyalty/v1/transactions/accumulate` | JWT | Acumular puntos. |
+| `POST` | `/loyalty/v1/transactions/redeem` | JWT | Redimir puntos. |
+| `GET` | `/loyalty/v1/transactions/:documentType/:documentNumber` | JWT | Consultar transacciones. |
+| `GET` | `/docs` | Público | Interfaz Swagger/OpenAPI. |
+
+Las rutas protegidas requieren `Authorization: Bearer <token>` y scope `user`. Registro y login son públicos. `generic` cuenta con rutas adicionales.
+
+# 15. Principios aplicados
+
+- Separación de responsabilidades e inversión de dependencias.
+- Validación de solicitudes mediante Zod.
+- Inyección de dependencias con Awilix.
+- Autenticación y autorización mediante JWT y scopes.
+- Errores centralizados y logging estructurado.
+
+# Documentación
+
+Consulta el índice de funcionalidades y casos de uso en [`docs/main.md`](docs/main.md). La interfaz OpenAPI está disponible en `/docs` con el servidor activo.
+
+<!--
 
 Backend base profesional construido con:
 

@@ -1,0 +1,100 @@
+<svg viewBox="0 0 1240 650" role="img" aria-label="Arquitectura general del sistema Loyalty">
+  <defs>
+    <marker id="arrow-default" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="m-default"/>
+    </marker>
+    <marker id="arrow-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="m-security"/>
+    </marker>
+  </defs>
+  <g data-node-id="web">
+    <rect x="30" y="145" width="195" height="82" rx="8" class="c-mask"/>
+    <rect x="30" y="145" width="195" height="82" rx="8" class="c-frontend" stroke-width="1.5"/>
+    <text x="127" y="175" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Cliente web</text>
+    <text x="127" y="198" class="t-muted" font-size="10" text-anchor="middle">loyalty-web · Next.js reportado</text>
+    <text x="127" y="215" class="t-frontend" font-size="8" text-anchor="middle">Implementación externa no verificada</text>
+  </g>
+  <g data-edge-from="web" data-edge-to="api">
+    <path d="M 225 186 L 270 186 Q 290 186 290 206 L 290 285" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="256" y="174" class="t-muted" font-size="8" text-anchor="middle">REST · reportado</text>
+  </g>
+  <g data-node-id="mobile">
+    <rect x="30" y="455" width="200" height="88" rx="8" class="c-mask"/>
+    <rect x="30" y="455" width="200" height="88" rx="8" class="c-frontend" stroke-width="1.5"/>
+    <text x="130" y="485" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Cliente móvil</text>
+    <text x="130" y="508" class="t-muted" font-size="10" text-anchor="middle">loyalty-movile · React Native</text>
+    <text x="130" y="528" class="t-frontend" font-size="8" text-anchor="middle">APK reportado · código no verificado</text>
+  </g>
+  <g data-edge-from="mobile" data-edge-to="api">
+    <path d="M 230 499 L 270 499 Q 290 499 290 479 L 290 360" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="260" y="518" class="t-muted" font-size="8" text-anchor="middle">REST · reportado</text>
+  </g>
+  <g data-node-id="api">
+    <rect x="300" y="285" width="200" height="80" rx="8" class="c-mask"/>
+    <rect x="300" y="285" width="200" height="80" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="400" y="316" class="t-primary" font-size="14" font-weight="600" text-anchor="middle">Loyalty Backend</text>
+    <text x="400" y="340" class="t-muted" font-size="10" text-anchor="middle">Express 5 + TypeScript · REST</text>
+  </g>
+  <g data-edge-from="api" data-edge-to="security">
+    <line x1="400" y1="285" x2="400" y2="207" class="a-security" stroke-width="1.7" marker-end="url(#arrow-security)"/>
+    <text x="414" y="247" class="t-security" font-size="8">Rutas protegidas</text>
+  </g>
+  <g data-node-id="security">
+    <rect x="300" y="112" width="200" height="96" rx="8" class="c-mask"/>
+    <rect x="300" y="112" width="200" height="96" rx="8" class="c-security" stroke-width="1.5"/>
+    <text x="400" y="143" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">Autenticación y scopes</text>
+    <text x="400" y="166" class="t-muted" font-size="10" text-anchor="middle">JWT Bearer · HS256</text>
+    <text x="400" y="186" class="t-security" font-size="9" text-anchor="middle">Selectivo por ruta</text>
+  </g>
+  <g data-edge-from="api" data-edge-to="usecases">
+    <line x1="500" y1="325" x2="555" y2="325" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="527" y="311" class="t-muted" font-size="8" text-anchor="middle">controladores</text>
+  </g>
+  <g data-node-id="usecases">
+    <rect x="565" y="285" width="210" height="80" rx="8" class="c-mask"/>
+    <rect x="565" y="285" width="210" height="80" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="670" y="316" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Capacidades de lealtad</text>
+    <text x="670" y="340" class="t-muted" font-size="9" text-anchor="middle">Usuarios · saldo · puntos · transacciones</text>
+  </g>
+  <g data-edge-from="usecases" data-edge-to="repositories">
+    <line x1="775" y1="325" x2="820" y2="325" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="797" y="311" class="t-muted" font-size="8" text-anchor="middle">persistencia</text>
+  </g>
+  <g data-node-id="repositories">
+    <rect x="830" y="285" width="178" height="80" rx="8" class="c-mask"/>
+    <rect x="830" y="285" width="178" height="80" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="919" y="316" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Repositorios</text>
+    <text x="919" y="340" class="t-muted" font-size="10" text-anchor="middle">PostgreSQL · pg Pool</text>
+  </g>
+  <g data-edge-from="repositories" data-edge-to="postgres">
+    <line x1="1008" y1="325" x2="1052" y2="325" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="1029" y="311" class="t-muted" font-size="8" text-anchor="middle">SQL</text>
+  </g>
+  <g data-node-id="postgres">
+    <rect x="1060" y="285" width="160" height="80" rx="8" class="c-mask"/>
+    <rect x="1060" y="285" width="160" height="80" rx="8" class="c-database" stroke-width="1.5"/>
+    <text x="1140" y="316" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">PostgreSQL</text>
+    <text x="1140" y="340" class="t-muted" font-size="9" text-anchor="middle">Proveedor no verificado</text>
+  </g>
+  <g data-edge-from="usecases" data-edge-to="poke_adapter">
+    <line x1="670" y1="365" x2="670" y2="463" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="684" y="419" class="t-muted" font-size="9">Módulo generic</text>
+  </g>
+  <g data-node-id="poke_adapter">
+    <rect x="565" y="470" width="210" height="80" rx="8" class="c-mask"/>
+    <rect x="565" y="470" width="210" height="80" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="670" y="501" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">PokeApiAdapter</text>
+    <text x="670" y="525" class="t-muted" font-size="10" text-anchor="middle">Cliente Axios · timeout 4 s</text>
+  </g>
+  <g data-edge-from="poke_adapter" data-edge-to="pokeapi">
+    <line x1="775" y1="510" x2="820" y2="510" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="797" y="496" class="t-muted" font-size="8" text-anchor="middle">HTTP GET</text>
+  </g>
+  <g data-node-id="pokeapi">
+    <rect x="830" y="470" width="178" height="80" rx="8" class="c-mask"/>
+    <rect x="830" y="470" width="178" height="80" rx="8" class="c-external" stroke-width="1.5"/>
+    <text x="919" y="501" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">PokeAPI</text>
+    <text x="919" y="525" class="t-muted" font-size="9" text-anchor="middle">Servicio externo</text>
+  </g>
+  <text x="35" y="608" class="t-muted" font-size="10">Los clientes web/móvil son declarados; el backend y la integración PokeAPI están respaldados por código. Hosting y estado operativo no se muestran.</text>
+</svg>
