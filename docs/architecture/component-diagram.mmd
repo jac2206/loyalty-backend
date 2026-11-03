@@ -1,0 +1,19 @@
+flowchart LR
+  caller[Clientes HTTP]
+  subgraph backend["Loyalty Backend · Express + TypeScript"]
+    api["API Express<br/>/loyalty/v1 · controllers"]
+    auth["Autenticación y scopes<br/>JWT Bearer · HS256"]
+    app["Casos de uso<br/>users · accounts · transactions · generic"]
+    repos["Repositorios PostgreSQL<br/>pg Pool"]
+    poke["PokeApiAdapter<br/>cliente HTTP Axios"]
+  end
+  db[(PostgreSQL<br/>esquemas loyalty y generics)]
+  pokeapi["PokeAPI externa"]
+
+  caller -->|HTTP| api
+  api -->|solo rutas protegidas| auth
+  api -->|invoca casos de uso| app
+  app -->|puertos de repositorio| repos
+  repos -->|SQL| db
+  app -->|consulta Pokémon| poke
+  poke -->|GET Pokémon · timeout 4 s| pokeapi

@@ -1,0 +1,23 @@
+<mxfile host="app.diagrams.net" modified="2026-11-02T23:54:30.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="loyalty-reported-deployment" name="Despliegue declarado · no verificado">
+    <mxGraphModel dx="1190" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1190" pageHeight="720" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="users" value="Personas usuarias" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="40" y="260" width="150" height="65" as="geometry"/></mxCell>
+        <mxCell id="vercel" value="Vercel&#xa;Hosting web reportado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;container=1;collapsible=0;" vertex="1" parent="1"><mxGeometry x="270" y="75" width="230" height="155" as="geometry"/></mxCell>
+        <mxCell id="web" value="loyalty-web&#xa;Next.js · reportado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;" vertex="1" parent="vercel"><mxGeometry x="25" y="55" width="180" height="70" as="geometry"/></mxCell>
+        <mxCell id="mobile" value="loyalty-movile&#xa;React Native · APK reportado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="280" y="420" width="200" height="80" as="geometry"/></mxCell>
+        <mxCell id="railway" value="Railway&#xa;Destino configurado en el repo;&#xa;estado operativo no verificado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;container=1;collapsible=0;" vertex="1" parent="1"><mxGeometry x="590" y="190" width="250" height="185" as="geometry"/></mxCell>
+        <mxCell id="backend" value="loyalty-backend&#xa;Express + TypeScript&#xa;API REST" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#9673a6;" vertex="1" parent="railway"><mxGeometry x="30" y="80" width="190" height="75" as="geometry"/></mxCell>
+        <mxCell id="supabase" value="Supabase&#xa;Proveedor reportado;&#xa;no corroborado por este repo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;container=1;collapsible=0;" vertex="1" parent="1"><mxGeometry x="920" y="205" width="235" height="165" as="geometry"/></mxCell>
+        <mxCell id="postgres" value="PostgreSQL&#xa;El proveedor real no se deduce de DATABASE_URL" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#ffffff;strokeColor=#82b366;" vertex="1" parent="supabase"><mxGeometry x="35" y="70" width="165" height="70" as="geometry"/></mxCell>
+        <mxCell id="e1" value="Acceso web reportado" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="users" target="web"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="Uso del APK reportado" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="users" target="mobile"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="API REST reportada" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="web" target="backend"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="API REST reportada" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="mobile" target="backend"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="PostgreSQL declarado" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="backend" target="postgres"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="note" value="Vercel, el APK y Supabase provienen de las declaraciones del paquete de documentación anterior. Railway aparece además en azure-pipelines.yml y en el servidor OpenAPI; estas referencias verifican configuración, no un despliegue activo. Proyecto, región, dominio, red, TLS efectivo y estado operativo no se verificaron." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1"><mxGeometry x="35" y="580" width="1120" height="85" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

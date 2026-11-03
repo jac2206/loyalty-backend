@@ -1,5 +1,9 @@
 # Loyalty Backend
 
+## Arquitectura
+
+Consulta la [arquitectura del backend](architecture/architecture.md), sus diagramas Mermaid y Draw.io, la vista de despliegue declarada y la propuesta AWS.
+
 ## Propósito
 
 API HTTP para registrar e identificar usuarios y administrar sus cuentas de puntos: consulta de saldo, acumulación, redención y consulta de transacciones. El servidor está implementado con Express 5 y TypeScript; usa PostgreSQL para los datos de lealtad y JWT para autenticar rutas protegidas.
