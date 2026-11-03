@@ -1,0 +1,88 @@
+<svg viewBox="0 0 1220 650" role="img" aria-label="Arquitectura del backend Loyalty">
+  <defs>
+    <marker id="arrow-default" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="m-default"/>
+    </marker>
+    <marker id="arrow-security" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" class="m-security"/>
+    </marker>
+  </defs>
+  <g data-node-id="callers">
+    <rect x="35" y="270" width="160" height="76" rx="8" class="c-mask"/>
+    <rect x="35" y="270" width="160" height="76" rx="8" class="c-external" stroke-width="1.5"/>
+    <text x="115" y="300" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">Clientes HTTP</text>
+    <text x="115" y="321" class="t-muted" font-size="10" text-anchor="middle">Consumidores de la API</text>
+  </g>
+  <g data-edge-from="callers" data-edge-to="api">
+    <line x1="195" y1="308" x2="258" y2="308" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="226" y="298" class="t-muted" font-size="9" text-anchor="middle">HTTP</text>
+  </g>
+  <g data-node-id="api">
+    <rect x="265" y="270" width="190" height="76" rx="8" class="c-mask"/>
+    <rect x="265" y="270" width="190" height="76" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="360" y="300" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">API Express</text>
+    <text x="360" y="322" class="t-muted" font-size="10" text-anchor="middle">/loyalty/v1 · controladores</text>
+  </g>
+  <g data-edge-from="api" data-edge-to="security">
+    <path d="M 360 270 L 360 225 L 350 225 L 350 188" class="a-security" stroke-width="1.7" marker-end="url(#arrow-security)"/>
+    <text x="435" y="227" class="t-security" font-size="9" text-anchor="end">Solo rutas protegidas</text>
+  </g>
+  <g data-node-id="security">
+    <rect x="260" y="92" width="205" height="96" rx="8" class="c-mask"/>
+    <rect x="260" y="92" width="205" height="96" rx="8" class="c-security" stroke-width="1.5"/>
+    <text x="362" y="122" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">Autenticación y scopes</text>
+    <text x="362" y="145" class="t-muted" font-size="10" text-anchor="middle">JWT Bearer · HS256</text>
+    <text x="362" y="165" class="t-security" font-size="9" text-anchor="middle">Scope por ruta</text>
+  </g>
+  <g data-edge-from="api" data-edge-to="usecases">
+    <line x1="455" y1="308" x2="507" y2="308" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="481" y="294" class="t-muted" font-size="8" text-anchor="middle">invoca</text>
+  </g>
+  <g data-node-id="usecases">
+    <rect x="515" y="270" width="215" height="76" rx="8" class="c-mask"/>
+    <rect x="515" y="270" width="215" height="76" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="622" y="299" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Casos de uso</text>
+    <text x="622" y="321" class="t-muted" font-size="9" text-anchor="middle">users · accounts · transactions · generic</text>
+  </g>
+  <g data-edge-from="usecases" data-edge-to="repositories">
+    <line x1="730" y1="308" x2="777" y2="308" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="753" y="294" class="t-muted" font-size="8" text-anchor="middle">puertos</text>
+  </g>
+  <g data-node-id="repositories">
+    <rect x="785" y="270" width="180" height="76" rx="8" class="c-mask"/>
+    <rect x="785" y="270" width="180" height="76" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="875" y="299" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">Repositorios</text>
+    <text x="875" y="321" class="t-muted" font-size="10" text-anchor="middle">SQL mediante pg Pool</text>
+  </g>
+  <g data-edge-from="repositories" data-edge-to="postgres">
+    <line x1="965" y1="308" x2="1010" y2="308" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="987" y="294" class="t-muted" font-size="8" text-anchor="middle">SQL</text>
+  </g>
+  <g data-node-id="postgres">
+    <rect x="1018" y="270" width="170" height="76" rx="8" class="c-mask"/>
+    <rect x="1018" y="270" width="170" height="76" rx="8" class="c-database" stroke-width="1.5"/>
+    <text x="1103" y="299" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">PostgreSQL</text>
+    <text x="1103" y="321" class="t-muted" font-size="10" text-anchor="middle">loyalty.* · generics</text>
+  </g>
+  <g data-edge-from="usecases" data-edge-to="poke_adapter">
+    <path d="M 622 346 L 622 418" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="635" y="387" class="t-muted" font-size="9">Consulta Pokémon</text>
+  </g>
+  <g data-node-id="poke_adapter">
+    <rect x="515" y="425" width="215" height="76" rx="8" class="c-mask"/>
+    <rect x="515" y="425" width="215" height="76" rx="8" class="c-backend" stroke-width="1.5"/>
+    <text x="622" y="454" class="t-primary" font-size="12" font-weight="600" text-anchor="middle">PokeApiAdapter</text>
+    <text x="622" y="476" class="t-muted" font-size="10" text-anchor="middle">Axios · timeout de 4 s</text>
+  </g>
+  <g data-edge-from="poke_adapter" data-edge-to="pokeapi">
+    <line x1="730" y1="463" x2="807" y2="463" class="a-default" stroke-width="1.7" marker-end="url(#arrow-default)"/>
+    <text x="768" y="449" class="t-muted" font-size="8" text-anchor="middle">GET Pokémon</text>
+  </g>
+  <g data-node-id="pokeapi">
+    <rect x="815" y="425" width="200" height="76" rx="8" class="c-mask"/>
+    <rect x="815" y="425" width="200" height="76" rx="8" class="c-external" stroke-width="1.5"/>
+    <text x="915" y="454" class="t-primary" font-size="13" font-weight="600" text-anchor="middle">PokeAPI</text>
+    <text x="915" y="476" class="t-muted" font-size="9" text-anchor="middle">/api/v2/pokemon/:name</text>
+  </g>
+  <text x="35" y="570" class="t-muted" font-size="10">Llamada externa desde el módulo de ejemplo generic. Base de datos y servicio HTTP no comparten proveedor de despliegue conocido.</text>
+</svg>

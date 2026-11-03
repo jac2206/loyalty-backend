@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura del Loyalty Backend",
+    "locale": "es",
+    "output": "docs/architecture/backend-architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/jac2206/loyalty-backend.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "b384025ce43af231d4212f607fc125cd143e8a7c"
+    }
+  },
+  "components": [
+    {
+      "id": "callers",
+      "type": "external",
+      "label": "Clientes HTTP",
+      "sublabel": "Consumidores de la API",
+      "pos": [40, 280],
+      "size": [150, 64],
+      "sources": [{ "path": "src/server.ts", "line": 70, "end_line": 71 }]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API Express",
+      "sublabel": "/loyalty/v1 · controladores",
+      "pos": [270, 280],
+      "size": [168, 72],
+      "sources": [
+        { "path": "src/server.ts", "line": 29, "end_line": 71 },
+        {
+          "path": "src/infraestructure/http/routes/v1/index.ts",
+          "line": 7,
+          "end_line": 12
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "type": "security",
+      "label": "Autenticación y scopes",
+      "sublabel": "JWT Bearer · HS256 · rutas seleccionadas",
+      "pos": [270, 110],
+      "size": [200, 76],
+      "sources": [
+        {
+          "path": "src/infraestructure/http/middlewares/auth.middleware.ts",
+          "line": 5,
+          "end_line": 34
+        },
+        {
+          "path": "src/infraestructure/http/middlewares/scope.middleware.ts",
+          "line": 3,
+          "end_line": 26
+        },
+        {
+          "path": "src/infraestructure/security/jwt-auth.service.ts",
+          "line": 9,
+          "end_line": 27
+        }
+      ]
+    },
+    {
+      "id": "usecases",
+      "type": "backend",
+      "label": "Casos de uso",
+      "sublabel": "Usuarios · cuentas · transacciones · generic",
+      "pos": [520, 280],
+      "size": [200, 72],
+      "sources": [
+        { "path": "src/config/container.ts", "line": 36, "end_line": 51 },
+        {
+          "path": "src/application/use-cases/transactions/accumulate-points.usecase.ts",
+          "line": 18,
+          "end_line": 59
+        },
+        {
+          "path": "src/application/use-cases/transactions/redeem-points.usecase.ts",
+          "line": 18,
+          "end_line": 67
+        }
+      ]
+    },
+    {
+      "id": "repositories",
+      "type": "backend",
+      "label": "Repositorios",
+      "sublabel": "Consultas SQL mediante pg Pool",
+      "pos": [800, 280],
+      "size": [178, 72],
+      "sources": [
+        { "path": "src/config/container.ts", "line": 74, "end_line": 79 },
+        {
+          "path": "src/infraestructure/database/postgres.ts",
+          "line": 5,
+          "end_line": 10
+        },
+        {
+          "path": "src/infraestructure/database/repositories/transaction.repository.ts",
+          "line": 54,
+          "end_line": 71
+        }
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "loyalty.* y generics",
+      "pos": [1060, 280],
+      "size": [150, 72],
+      "sources": [
+        {
+          "path": "src/infraestructure/database/repositories/user.repository.ts",
+          "line": 9,
+          "end_line": 13
+        },
+        {
+          "path": "src/infraestructure/database/repositories/generic.repository.ts",
+          "line": 9,
+          "end_line": 13
+        },
+        {
+          "path": "src/infraestructure/database/postgres.ts",
+          "line": 5,
+          "end_line": 19
+        }
+      ]
+    },
+    {
+      "id": "poke_adapter",
+      "type": "backend",
+      "label": "PokeApiAdapter",
+      "sublabel": "Cliente Axios · timeout de 4 s",
+      "pos": [520, 490],
+      "size": [190, 72],
+      "sources": [
+        { "path": "src/config/container.ts", "line": 57, "end_line": 67 },
+        {
+          "path": "src/infraestructure/adapters/poke-api.adapter.ts",
+          "line": 16,
+          "end_line": 32
+        },
+        {
+          "path": "src/infraestructure/http/http-client.ts",
+          "line": 54,
+          "end_line": 88
+        }
+      ]
+    },
+    {
+      "id": "pokeapi",
+      "type": "external",
+      "label": "PokeAPI",
+      "sublabel": "Servicio HTTP externo",
+      "pos": [800, 490],
+      "size": [160, 72],
+      "sources": [
+        {
+          "path": "src/infraestructure/adapters/poke-api.adapter.ts",
+          "line": 18,
+          "end_line": 23
+        }
+      ]
+    }
+  ],
+  "connections": [
+    { "id": "caller_api", "from": "callers", "to": "api", "label": "HTTP" },
+    {
+      "id": "api_security",
+      "from": "api",
+      "to": "security",
+      "label": "Solo rutas protegidas · JWT y scope"
+    },
+    {
+      "id": "api_usecases",
+      "from": "api",
+      "to": "usecases",
+      "label": "Controladores invocan casos de uso"
+    },
+    {
+      "id": "usecases_repositories",
+      "from": "usecases",
+      "to": "repositories",
+      "label": "Puertos de repositorio"
+    },
+    {
+      "id": "repositories_postgres",
+      "from": "repositories",
+      "to": "postgres",
+      "label": "SQL"
+    },
+    {
+      "id": "pokemon_usecase",
+      "from": "usecases",
+      "to": "poke_adapter",
+      "label": "Consulta Pokémon"
+    },
+    {
+      "id": "adapter_pokeapi",
+      "from": "poke_adapter",
+      "to": "pokeapi",
+      "label": "GET /api/v2/pokemon/:name"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Alcance de seguridad",
+      "items": [
+        "Las rutas principales de users, accounts y transactions aplican JWT Bearer y scope user.",
+        "Registro y login son públicos; las rutas generic tienen middleware distinto.",
+        "La seguridad global en Swagger no representa por sí sola los middlewares efectivos."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Persistencia",
+      "items": [
+        "Los módulos de lealtad consultan loyalty.users, loyalty.accounts y loyalty.transactions.",
+        "GenericRepository consulta la tabla generics; no se conoce el proveedor ni dónde corre PostgreSQL."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Límite de evidencia",
+      "items": [
+        "Este diagrama cubre el backend del repositorio, no la implementación de clientes externos ni un despliegue vigente.",
+        "PokeAPI se llama desde el módulo de ejemplo generic."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+<mxfile host="app.diagrams.net" modified="2026-11-02T23:54:30.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="loyalty-backend-components" name="Componentes lógicos del backend">
+    <mxGraphModel dx="1240" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/><mxCell id="1" parent="0"/>
+        <mxCell id="boundary" value="Proceso Loyalty Backend · vista lógica" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;dashed=1;container=1;collapsible=0;verticalAlign=top;align=left;spacingLeft=12;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="230" y="55" width="750" height="500" as="geometry"/></mxCell>
+        <mxCell id="caller" value="Clientes HTTP&#xa;Consumidores externos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="35" y="250" width="155" height="70" as="geometry"/></mxCell>
+        <mxCell id="api" value="API Express&#xa;/loyalty/v1 · controladores" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="boundary"><mxGeometry x="45" y="205" width="175" height="75" as="geometry"/></mxCell>
+        <mxCell id="security" value="Autenticación y scopes&#xa;JWT Bearer · HS256&#xa;Rutas seleccionadas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="boundary"><mxGeometry x="35" y="55" width="195" height="90" as="geometry"/></mxCell>
+        <mxCell id="usecases" value="Casos de uso&#xa;users · accounts · transactions · generic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="boundary"><mxGeometry x="300" y="205" width="220" height="75" as="geometry"/></mxCell>
+        <mxCell id="repositories" value="Repositorios&#xa;Consultas SQL mediante pg Pool" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="boundary"><mxGeometry x="565" y="205" width="160" height="75" as="geometry"/></mxCell>
+        <mxCell id="db" value="PostgreSQL&#xa;loyalty.* y generics&#xa;Proveedor/host desconocido" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="1040" y="215" width="175" height="90" as="geometry"/></mxCell>
+        <mxCell id="poke" value="PokeApiAdapter&#xa;Cliente Axios · timeout 4 s" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="boundary"><mxGeometry x="300" y="365" width="220" height="75" as="geometry"/></mxCell>
+        <mxCell id="pokeapi" value="PokeAPI&#xa;Servicio HTTP externo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1"><mxGeometry x="600" y="400" width="175" height="70" as="geometry"/></mxCell>
+        <mxCell id="e1" value="HTTP" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="caller" target="api"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" value="Solo rutas protegidas · JWT y scope" style="endArrow=block;html=1;rounded=0;" edge="1" parent="boundary" source="api" target="security"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" value="Controladores invocan casos de uso" style="endArrow=block;html=1;rounded=0;" edge="1" parent="boundary" source="api" target="usecases"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" value="Puertos de repositorio" style="endArrow=block;html=1;rounded=0;" edge="1" parent="boundary" source="usecases" target="repositories"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" value="SQL vía pg" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="repositories" target="db"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" value="Consulta Pokémon (generic)" style="endArrow=block;html=1;rounded=0;" edge="1" parent="boundary" source="usecases" target="poke"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" value="GET /api/v2/pokemon/:name" style="endArrow=block;html=1;rounded=0;" edge="1" parent="1" source="poke" target="pokeapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="note" value="Código verificado en el repositorio. La verificación JWT no se aplica a todas las rutas: registro/login son públicos y generic mantiene middleware distinto. El proveedor y el hosting de PostgreSQL no se deducen de la conexión DATABASE_URL." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1"><mxGeometry x="35" y="600" width="1180" height="60" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
