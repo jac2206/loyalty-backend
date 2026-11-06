@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "running",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-11-06T00:37:35.945Z",
+  "specification": {
+    "path": "D:\\Codigos\\expressTS\\loyalty-backend\\.archify\\architecture-aws-loyalty-20261105-193100\\candidate.json",
+    "sha256": "06154acf60d9c273fc68eba2184eb0fd61454887e96d20056f691fcb0fa1d85b",
+    "bytes": 5125
+  },
+  "artifact": {
+    "path": "D:\\Codigos\\expressTS\\loyalty-backend\\.archify\\architecture-aws-loyalty-20261105-193100\\aws-loyalty.html"
+  },
+  "stages": {},
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  },
+  "diagnostics": [],
+  "evidence": {
+    "receipt": "D:\\Codigos\\expressTS\\loyalty-backend\\.archify\\architecture-aws-loyalty-20261105-193100\\aws-loyalty.finalize.json",
+    "summaryReceipt": "D:\\Codigos\\expressTS\\loyalty-backend\\.archify\\architecture-aws-loyalty-20261105-193100\\aws-loyalty.finalize-summary.json"
+  },
+  "visualReview": "not-requested"
+}
