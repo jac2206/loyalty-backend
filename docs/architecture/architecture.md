@@ -19,11 +19,39 @@ Esta documentación describe la implementación del backend comprobada en el rep
 
 Los HTML Archify publicados en este repositorio usan el fallback manual documentado por Archify: el finalizador CLI fallo al crear un proceso (spawn EPERM). El HTML AWS recien generado no esta finalizado por CLI ni cuenta con validacion automatica de navegador; los recibos conservan el resultado incompleto del intento.
 
-## Verificacion de iconos y presentacion de los diagramas
+## Limites e iconos de las propuestas cloud
 
-Se consultaron los catalogos oficiales de [AWS](https://aws.amazon.com/architecture/icons/), [Azure](https://learn.microsoft.com/en-us/azure/architecture/icons/) y [Google Cloud](https://cloud.google.com/icons). Los paquetes descargables actuales son ZIP y esta sesion no pudo inspeccionar su contenido; diagrams.net Desktop tampoco esta disponible para comprobar la biblioteca instalada ni renderizar los archivos. Por eso las tarjetas de servicios sin pictograma se marcan como **Icono no verificado**: AWS (VPC Link v2, Network Load Balancer y RDS for PostgreSQL), Azure (Microsoft Entra External ID y el recurso LoadBalancer interno de AKS) y Google Cloud (Identity Platform, Apigee X y los attachments de PSC). Se conservaron los iconos SVG ya incluidos para API Management, AKS, Azure Database for PostgreSQL, Cloud Load Balancing, GKE y Cloud SQL, con etiquetas editables separadas. Los pictogramas de persona y dispositivos tambien conservan sus etiquetas independientes.
+Las tres vistas de infraestructura ahora separan a los clientes y PokeAPI en zonas externas del limite cloud. Cada propuesta lleva un marco de proveedor con cuenta/proyecto/suscripcion y region marcados TBD. Los limites VPC/VNet contienen solo recursos de red y computo que corresponden a ellos. En Azure, API Management y Entra External ID quedan fuera de la VNet; PostgreSQL Flexible Server aparece como servicio gestionado fuera de la VNet y el acceso privado queda propuesto con detalles TBD. En Google Cloud, Apigee se conecta desde su VPC gestionada al service attachment de la VPC del backend mediante PSC; GKE y el balanceador interno permanecen en la VPC del backend. Cloud SQL se muestra como servicio gestionado fuera de esa VPC, con el metodo de conectividad privada por decidir. AWS mantiene Cognito, API Gateway, Lambda authorizer y VPC Link en la cuenta/region propuesta y reserva la VPC para el NLB, EKS y RDS.
 
-La validacion estructural y geometrica se ejecuto con la version 1.8.7 de la skill. La revision visual renderizada queda pendiente hasta disponer de diagrams.net Desktop.
+### Inventario de iconos
+
+Se consultaron los estilos AWS4 incluidos en el archivo, el catalogo de [iconos extra de Draw.io](https://www.drawio.com/docs/manual/shapes/extra-icon-sets/) y los catalogos oficiales de [AWS](https://aws.amazon.com/architecture/icons/), [Azure](https://learn.microsoft.com/en-us/azure/architecture/icons/) y [Google Cloud](https://cloud.google.com/icons). La lista de bibliotecas disponibles en Draw.io Web incluye Azure y Azure Integration Services; no se verifico un icono exacto para cada servicio restante. Los paquetes oficiales actuales se ofrecen como ZIP y el lector web no pudo inspeccionar su contenido. diagrams.net Desktop no esta disponible para buscar en la biblioteca local, verificar el glifo de AWS4 ni renderizar.
+
+| Proveedor | Servicio (celda) | Icono o resultado |
+| --- | --- | --- |
+| AWS | Cognito (`cognito`) | Estilo AWS4 `mxgraph.aws4.cognito`; referencia oficial AWS |
+| AWS | API Gateway (`apigw`) | Estilo AWS4 `mxgraph.aws4.api_gateway`; referencia oficial AWS |
+| AWS | Lambda authorizer (`lambda`) | Estilo AWS4 `mxgraph.aws4.lambda`; referencia oficial AWS |
+| AWS | EKS (`eks-icon`) | Estilo AWS4 `mxgraph.aws4.eks`; referencia oficial AWS |
+| AWS | Network Load Balancer (`nlb`) | AWS4 `mxgraph.aws4.network_load_balancer`; referencia oficial AWS |
+| AWS | RDS for PostgreSQL (`rds`) | AWS4 `mxgraph.aws4.rds`; referencia oficial AWS |
+| AWS | VPC Link v2 (`vpclink`) | Tarjeta editable; icono exacto no verificado: biblioteca instalada y paquete AWS actual no inspeccionables |
+| Azure | API Management (`apim`) | SVG incrustado de Azure Architecture Center |
+| Azure | Kubernetes Service (`aks-icon`) | SVG incrustado de Azure Architecture Center |
+| Azure | PostgreSQL Flexible Server (`postgres`) | SVG incrustado de Azure Architecture Center |
+| Azure | Entra External ID (`entra`) | Tarjeta editable; icono exacto no verificado en catalogo extra ni paquete Azure inspeccionable |
+| Azure | AKS internal LoadBalancer (`ilb`) | Tarjeta editable; icono exacto no verificado en catalogo extra ni paquete Azure inspeccionable |
+| Google Cloud | Cloud Load Balancing (`gclb`) | SVG incrustado de categoria/producto; etiqueta editable conserva el servicio exacto |
+| Google Cloud | GKE (`gke-icon`) | SVG incrustado de Google Cloud product icons |
+| Google Cloud | Cloud SQL (`cloudsql`) | SVG incrustado de Google Cloud product icons |
+| Google Cloud | Identity Platform (`idp`) | Tarjeta editable; icono exacto no verificado: paquete Google y biblioteca instalada no inspeccionables |
+| Google Cloud | Apigee X (`apigee`) | Tarjeta editable; icono exacto no verificado: paquete Google y biblioteca instalada no inspeccionables |
+| Google Cloud | PSC endpoint attachment (`psc-endpoint`) | Tarjeta editable; icono exacto no verificado: paquete Google y biblioteca instalada no inspeccionables |
+| Google Cloud | PSC service attachment (`psc-service`) | Tarjeta editable; icono exacto no verificado: paquete Google y biblioteca instalada no inspeccionables |
+
+La ubicacion de PSC sigue el patron documentado por Google: el endpoint attachment esta en la VPC de Apigee y el service attachment en la VPC donde corre el backend. API Management se muestra fuera de la VNet con integracion VNet de salida; el tier de APIM sigue TBD. El servicio PostgreSQL administrado queda fuera de la VNet/VPC del backend; la modalidad privada aun debe decidirse. [Apigee PSC southbound](https://docs.cloud.google.com/apigee/docs/api-platform/architecture/southbound-networking-patterns-endpoints) | [APIM outbound VNet integration](https://learn.microsoft.com/en-us/azure/api-management/integrate-vnet-outbound) ? [Cloud SQL private IP](https://docs.cloud.google.com/sql/docs/postgres/configure-private-ip).
+
+Los pictogramas de cliente/persona son SVG incrustados con etiquetas separadas; son simbolos genericos de dispositivo/persona, no iconos de proveedor. La skill 1.8.11 valido el XML, geometria, conexiones y presencia de iconos del proveedor mediante `check_drawio.py --require-provider-icons`; el validador avisa que no puede certificar el origen del SVG. El inventario registra ese origen. No se hizo revision visual renderizada porque diagrams.net Desktop no esta disponible.
 
 ## Componentes e interacción
 
