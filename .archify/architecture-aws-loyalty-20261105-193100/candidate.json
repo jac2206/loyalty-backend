@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AWS · Loyalty Backend propuesto",
+    "locale": "es",
+    "output": ".archify/architecture-aws-loyalty-20261105-193100/aws-loyalty.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/jac2206/loyalty-backend.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "70cb23dad439b90a31bdd37de2a5cc2115a5a94b"
+    }
+  },
+  "components": [
+    {
+      "id": "clients",
+      "type": "external",
+      "label": "Clientes",
+      "sublabel": "web / móvil · reportados",
+      "pos": [40, 340],
+      "size": [120, 62]
+    },
+    {
+      "id": "cognito",
+      "type": "security",
+      "label": "Amazon Cognito",
+      "sublabel": "User Pool · emite JWT",
+      "pos": [210, 105],
+      "size": [145, 66]
+    },
+    {
+      "id": "gateway",
+      "type": "cloud",
+      "label": "API Gateway",
+      "sublabel": "HTTP API · rutas REST",
+      "pos": [210, 340],
+      "size": [145, 66]
+    },
+    {
+      "id": "authorizer",
+      "type": "security",
+      "label": "Lambda authorizer",
+      "sublabel": "REQUEST · policy",
+      "pos": [455, 105],
+      "size": [155, 68]
+    },
+    {
+      "id": "vpclink",
+      "type": "cloud",
+      "label": "VPC Link v2",
+      "sublabel": "private integration",
+      "pos": [455, 340],
+      "size": [135, 66]
+    },
+    {
+      "id": "nlb",
+      "type": "cloud",
+      "label": "NLB interno",
+      "sublabel": "listener TCP / TLS",
+      "pos": [655, 340],
+      "size": [135, 66]
+    },
+    {
+      "id": "backend",
+      "type": "backend",
+      "label": "loyalty-backend",
+      "sublabel": "Amazon EKS · Service / Pods (propuesto)",
+      "pos": [855, 340],
+      "size": [155, 70],
+      "sources": [
+        { "path": "src/server.ts", "line": 70, "end_line": 71, "label": "HTTP mounts" }
+      ]
+    },
+    {
+      "id": "jwtguard",
+      "type": "security",
+      "label": "JwtAuthService actual",
+      "sublabel": "HS256 · JWT_SECRET",
+      "pos": [855, 525],
+      "size": [170, 68],
+      "sources": [
+        {
+          "path": "src/infraestructure/security/jwt-auth.service.ts",
+          "line": 9,
+          "end_line": 24,
+          "label": "firma y valida HS256"
+        },
+        {
+          "path": "src/infraestructure/http/middlewares/auth.middleware.ts",
+          "line": 20,
+          "end_line": 25,
+          "label": "Bearer middleware"
+        }
+      ]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "Amazon RDS",
+      "sublabel": "PostgreSQL · propuesto",
+      "pos": [1080, 340],
+      "size": [140, 66],
+      "sources": [
+        {
+          "path": "src/infraestructure/database/postgres.ts",
+          "line": 5,
+          "end_line": 10,
+          "label": "PostgreSQL pg Pool"
+        }
+      ]
+    },
+    {
+      "id": "pokeapi",
+      "type": "external",
+      "label": "PokeAPI",
+      "sublabel": "generic · egress pendiente",
+      "pos": [1080, 540],
+      "size": [140, 66],
+      "sources": [
+        {
+          "path": "src/infraestructure/adapters/poke-api.adapter.ts",
+          "line": 16,
+          "end_line": 23,
+          "label": "GET · timeout 4 s"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "AWS · región por definir · objetivo propuesto",
+      "wraps": [
+        "cognito",
+        "gateway",
+        "authorizer",
+        "vpclink",
+        "nlb",
+        "backend",
+        "jwtguard",
+        "postgres"
+      ],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    { "from": "clients", "to": "cognito", "label": "OIDC", "variant": "security" },
+    {
+      "from": "clients",
+      "to": "gateway",
+      "label": "HTTPS / Bearer",
+      "variant": "emphasis"
+    },
+    {
+      "from": "cognito",
+      "to": "authorizer",
+      "label": "issuer / JWKS",
+      "variant": "security"
+    },
+    {
+      "from": "gateway",
+      "to": "authorizer",
+      "label": "REQUEST",
+      "variant": "security"
+    },
+    { "from": "gateway", "to": "vpclink", "label": "private", "variant": "emphasis" },
+    { "from": "vpclink", "to": "nlb", "label": "TCP / TLS", "variant": "emphasis" },
+    { "from": "nlb", "to": "backend", "label": "targets", "variant": "emphasis" },
+    { "from": "backend", "to": "postgres", "label": "SQL" },
+    {
+      "from": "backend",
+      "to": "jwtguard",
+      "label": "rutas protegidas",
+      "variant": "security"
+    },
+    { "from": "backend", "to": "pokeapi", "label": "HTTPS GET", "variant": "dashed" }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Brecha de autenticación",
+      "items": [
+        "La Lambda authorizer valida el JWT de Cognito y devuelve una decisión a API Gateway.",
+        "El backend actual solo acepta sus JWT HS256; un token Cognito se rechaza en JwtAuthService.",
+        "Definir validación compatible o intercambio de tokens y migración de registro/login antes de desplegar."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Red propuesta",
+      "items": [
+        "API Gateway HTTP API conecta por VPC Link v2 con un NLB interno que envía tráfico al Service de EKS.",
+        "Región, subredes, listener/TLS, egress a PokeAPI, alta disponibilidad, secretos, backups y observabilidad quedan por decidir.",
+        "Los servicios y la topología son una alternativa solicitada; no existe evidencia de despliegue AWS en este repositorio."
+      ]
+    }
+  ]
+}
