@@ -9,7 +9,7 @@ Loyalty Backend administra una cuenta de puntos por usuario. Permite registrar e
 | Capacidad | Responsabilidad |
 | --- | --- |
 | Usuarios | Registro, inicio de sesión JWT, perfil y listado protegido. |
-| Cuentas | Consulta de saldo por tipo y número de documento. |
+| Cuentas | Consulta de cuenta y saldo propios, y actualización del estado de la cuenta autenticada. |
 | Transacciones | Acumulación, redención e historial filtrable por tipo. |
 | Salud | Verificación básica del servicio. |
 | Generic | Módulo de ejemplo/chasis; no debe guiar nuevas capacidades de negocio. |
@@ -18,6 +18,7 @@ Loyalty Backend administra una cuenta de puntos por usuario. Permite registrar e
 
 - Un usuario se identifica por `documentType` (`CC`, `CE`, `NIT`, `PT`) y `documentNumber`.
 - Una cuenta pertenece a un usuario y mantiene `points_balance`.
+- El registro crea una cuenta activa con saldo cero para el nuevo usuario.
 - Una transacción es `ACUM` o `REDEM`, está asociada a una cuenta, partner, ubicación opcional, referencia, puntos y monto monetario.
 - La acumulación calcula `floor(amount / 1000)` puntos.
 - La redención exige puntos positivos y saldo suficiente; su monto es `points * 100`.
@@ -31,7 +32,8 @@ Loyalty Backend administra una cuenta de puntos por usuario. Permite registrar e
 
 ## Riesgos conocidos que deben considerarse en nuevas specs
 
-- Acumulación/redención insertan la transacción y modifican el saldo en operaciones separadas; una spec que requiera atomicidad debe exigir una transacción de PostgreSQL.
+- Acumulación y redención verifican titularidad, bloquean la cuenta y actualizan historial y saldo dentro de una transacción SQL; faltan pruebas de concurrencia y rollback con PostgreSQL real.
+- Los usuarios existentes sin cuenta necesitan el proceso de base de datos acordado; no se ha verificado su ejecución. Una cuenta con `status` nulo se considera inactiva para acumular o redimir.
 - Los contratos reales de User, Account y Transaction sí están documentados por Swagger; el módulo Generic no lo está de forma consistente.
 - `/health` está marcado como protegido en OpenAPI, pero no aplica middleware JWT. Si se toca, decidir y alinear comportamiento y documentación.
 - El CORS permitido está definido en `src/server.ts`; cambios de origen requieren decisión explícita de seguridad.
