@@ -22,7 +22,7 @@ Calcula puntos a partir de un monto, guarda una transacción `ACUM` y aumenta el
 ## Precondiciones y prerrequisitos
 
 - Body válido, token válido con scope `user` y cuenta asociada al documento del body.
-- El código no compara el documento del body con el `sub` del JWT.
+- `documentNumber` debe coincidir con el `sub` del JWT y la cuenta debe tener `status = true`.
 
 ## Parámetros de entrada
 
@@ -64,13 +64,11 @@ No aplica.
 ## Flujo principal
 
 1. Zod valida el body; luego la ruta valida JWT y scope `user`.
-2. `TransactionsController.accumulate` pasa el DTO a `AccumulatePointsUseCase`.
-3. El caso de uso rechaza monto menor o igual a cero con `TRANSACTION_POINTS_INVALID`.
-4. Busca la cuenta con `getAccountIdByDocument`; si no existe, lanza `ACCOUNT_NOT_FOUND`.
-5. Calcula `Math.floor(amount / 1000)` puntos.
-6. Construye una entidad `Transaction` tipo `ACUM` y guarda la transacción.
-7. Llama `AccountRepository.addPoints` para sumar los puntos y obtener el saldo actualizado.
-8. Devuelve mensaje, puntos ganados y saldo; el controlador responde 201.
+2. `TransactionsController.accumulate` pasa el DTO y `sub` a `AccumulatePointsUseCase`.
+3. El caso de uso verifica titularidad y monto positivo, calcula `Math.floor(amount / 1000)` y llama `ITransactionRepository.applyPoints`.
+4. El repositorio abre una transacción, busca y bloquea la cuenta (`FOR UPDATE`), y rechaza cuenta inexistente o estado distinto de `true`.
+5. Inserta `ACUM`, actualiza el saldo y confirma con `COMMIT`; ante fallos ejecuta `ROLLBACK`.
+6. El caso de uso construye el DTO y el controlador responde 201.
 
 ## Respuestas
 
@@ -89,7 +87,7 @@ No aplica.
 | HTTP | Código | Causa |
 | --- | --- | --- |
 | 401 | `UNAUTHORIZED` / `INVALID_TOKEN` | Token inválido o scope insuficiente. |
-| 403 | `FORBIDDEN` | Token sin scopes. |
+| 403 | `FORBIDDEN` / `ACCOUNT_DOCUMENT_MISMATCH` / `ACCOUNT_INACTIVE` | Sin scopes, documento ajeno o cuenta inactiva. |
 | 404 | `ACCOUNT_NOT_FOUND` | No existe cuenta para el documento. |
 | 422 | `VALIDATION_ERROR` | Body no válido. |
 | 422 | `TRANSACTION_POINTS_INVALID` | Monto no positivo si llega al caso de uso. |
@@ -99,11 +97,11 @@ No aplica.
 
 1. Los puntos son la parte entera de `amount / 1000`; montos positivos menores a 1000 generan cero puntos y no son rechazados por la regla del caso de uso.
 2. El tipo persistido es `ACUM`; un `locationCode` ausente se convierte en null.
-3. El token se usa para scope, no para limitar el documento suministrado.
+3. El documento debe coincidir con `sub`; el estado `false` o `null` impide acumular.
 
 ## Excepciones
 
-Los errores de dominio se serializan mediante `errorMiddleware`. Las operaciones de inserción y actualización son consultas separadas; un fallo al actualizar saldo puede dejar la transacción insertada.
+Los errores de dominio se serializan mediante `errorMiddleware`. El repositorio ejecuta `ROLLBACK` si falla la operación SQL.
 
 ## Diagrama de flujo
 
@@ -117,43 +115,37 @@ flowchart TB
     classDef rejectClass fill:#e36236,color:white,stroke:#b00000,stroke-width:2px
     classDef dbClass fill:#3578ff,stroke:blue,stroke-width:2px
     subgraph BACKEND [Flujo backend]
-        direction TB
-
         inicio((Inicio)):::inicioClass
-        ok((201 acumulación)):::finClass
+        valid["Validar body, JWT y scope"]:::statementClass
+        caso["AccumulatePointsUseCase: titularidad y entrada"]:::statementClass
+        titular{"¿Titular y entrada válidos?"}:::conditionalClass
+        repo["TransactionRepository.applyPoints: BEGIN y bloqueo"]:::statementClass
+        estado{"¿Cuenta activa?"}:::conditionalClass
+        guardar["INSERT ACUM y UPDATE saldo"]:::statementClass
+        commit["COMMIT"]:::statementClass
+        rollback["ROLLBACK"]:::rejectClass
+        fallo["Error de validación, autorización o dominio"]:::rejectClass
+        ok((201 Acumulación)):::finClass
         error((Error)):::finClass
-        valida["validate(accumulateRequestSchema)"]:::statementClass
-        auth["authenticateJWT y authorizeScopes(user)"]:::statementClass
-        control["TransactionsController.accumulate"]:::statementClass
-        caso["AccumulatePointsUseCase"]:::statementClass
-        monto{"¿Monto > 0?"}:::conditionalClass
-        cuenta["getAccountIdByDocument"]:::statementClass
-        existe{"¿Cuenta existe?"}:::conditionalClass
-        calcula["floor(amount / 1000), crear Transaction ACUM"]:::statementClass
-        guarda["TransactionRepository.save"]:::statementClass
-        suma["AccountRepository.addPoints"]:::statementClass
-        respuesta["Mapear puntosEarned y balance"]:::statementClass
-        rechazo["Error de validación, auth, monto o cuenta"]:::rejectClass
     end
     subgraph BASE_DE_DATOS [Base de datos]
-        direction TB
-        db[(PostgreSQL loyalty.transactions + loyalty.accounts)]:::dbClass
+        db[(PostgreSQL)]:::dbClass
     end
-
-
-    inicio --> valida --> auth --> control --> caso --> monto
-    monto -->|No| rechazo --> error
-    monto -->|Sí| cuenta --> existe
-    existe -->|No| rechazo
-    existe -->|Sí| calcula --> guarda --> suma --> respuesta --> ok
-    cuenta -.-> db
-    guarda -.-> db
-    suma -.-> db
+    inicio --> valid
+    valid -->|Error| fallo
+    valid -->|Correcto| caso --> titular
+    titular -->|No| fallo --> error
+    titular -->|Sí| repo --> estado
+    estado -->|No| rollback --> fallo
+    estado -->|Sí| guardar --> commit --> ok
+    guardar -->|Error| rollback
+    repo -.-> db
+    guardar -.-> db
 ```
 
 ## Detalles de implementación
 
-El caso de uso depende de `ITransactionRepository` y `IAccountRepository`. La transacción se crea en aplicación y ambos adaptadores ejecutan SQL parametrizado.
+El caso de uso depende de `ITransactionRepository`; `applyPoints` ejecuta SQL parametrizado con un mismo cliente.
 
 **Fuentes:** [ruta](../../../src/infraestructure/http/routes/v1/transactions.routes.ts), [controlador](../../../src/infraestructure/controllers/v1/transactions.controller.ts), [caso de uso](../../../src/application/use-cases/transactions/accumulate-points.usecase.ts), [repositorio transaccional](../../../src/infraestructure/database/repositories/transaction.repository.ts), [repositorio de cuenta](../../../src/infraestructure/database/repositories/account.repository.ts), [esquema](../../../src/infraestructure/schemas/transaction.schema.ts).
 
@@ -161,7 +153,7 @@ El caso de uso depende de `ITransactionRepository` y `IAccountRepository`. La tr
 
 ### Base de datos
 
-La inserción se realiza en `loyalty.transactions`; el saldo se actualiza en `loyalty.accounts`. No existe una transacción SQL que cubra ambas consultas.
+La inserción en `loyalty.transactions` y la actualización de `loyalty.accounts` ocurren dentro de una transacción SQL con bloqueo de fila. La concurrencia y rollback requieren validación adicional con PostgreSQL real.
 
 ### Eventos e integraciones
 

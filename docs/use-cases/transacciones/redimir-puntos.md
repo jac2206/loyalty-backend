@@ -22,7 +22,7 @@ Comprueba que el usuario tenga una cuenta y saldo suficiente, guarda una transac
 ## Precondiciones y prerrequisitos
 
 - Body válido, token válido con scope `user`, cuenta existente y saldo al menos igual a los puntos solicitados.
-- No se compara el documento del body con `sub` del token.
+- `documentNumber` debe coincidir con `sub` y la cuenta debe estar activa.
 
 ## Parámetros de entrada
 
@@ -64,13 +64,11 @@ No aplica.
 ## Flujo principal
 
 1. La ruta valida body, JWT y scope `user`.
-2. `TransactionsController.redeem` invoca `RedeemPointsUseCase`.
-3. El caso de uso rechaza puntos menores o iguales a cero con `TRANSACTION_POINTS_INVALID`.
-4. Busca cuenta por documento; si no existe, lanza `ACCOUNT_NOT_FOUND`.
-5. Lee el saldo; si es menor a los puntos solicitados, lanza `INSUFFICIENT_POINTS`.
-6. Calcula `amount = points * 100`, construye una transacción tipo `REDEM` y la inserta.
-7. Resta puntos en la cuenta y obtiene saldo nuevo.
-8. Devuelve puntos redimidos y saldo; el controlador responde 201.
+2. `TransactionsController.redeem` pasa el DTO y `sub` a `RedeemPointsUseCase`.
+3. El caso de uso comprueba titularidad y puntos positivos y llama `ITransactionRepository.applyPoints` con `amount = points * 100`.
+4. El repositorio abre una transacción, localiza y bloquea la cuenta, y verifica estado y saldo.
+5. Si procede, inserta `REDEM`, actualiza el saldo y confirma con `COMMIT`; ante fallos ejecuta `ROLLBACK`.
+6. El caso de uso construye el DTO y el controlador responde 201.
 
 ## Respuestas
 
@@ -89,7 +87,7 @@ No aplica.
 | HTTP | Código | Causa |
 | --- | --- | --- |
 | 401 | `UNAUTHORIZED` / `INVALID_TOKEN` | Token inválido o scope insuficiente. |
-| 403 | `FORBIDDEN` | Token sin scopes. |
+| 403 | `FORBIDDEN` / `ACCOUNT_DOCUMENT_MISMATCH` / `ACCOUNT_INACTIVE` | Sin scopes, documento ajeno o cuenta inactiva. |
 | 404 | `ACCOUNT_NOT_FOUND` | No existe una cuenta asociada al documento. |
 | 422 | `VALIDATION_ERROR` | Body no válido. |
 | 422 | `TRANSACTION_POINTS_INVALID` | Puntos no positivos si llegan al caso de uso. |
@@ -100,11 +98,11 @@ No aplica.
 
 1. El monto monetario registrado se calcula como `points * 100`.
 2. La transacción queda con tipo `REDEM`; una ubicación ausente se guarda como null.
-3. El caso de uso hace lectura de saldo y luego escritura; no reserva puntos de forma atómica.
+3. La cuenta se bloquea durante la comprobación de saldo y las escrituras.
 
 ## Excepciones
 
-El guardado de transacción y la resta de saldo son operaciones separadas. Si la resta falla después del INSERT, el historial podría contener la transacción sin que el saldo se haya actualizado.
+El repositorio ejecuta `ROLLBACK` ante un fallo durante las escrituras; los errores inesperados se responden como 500.
 
 ## Diagrama de flujo
 
@@ -118,48 +116,37 @@ flowchart TB
     classDef rejectClass fill:#e36236,color:white,stroke:#b00000,stroke-width:2px
     classDef dbClass fill:#3578ff,stroke:blue,stroke-width:2px
     subgraph BACKEND [Flujo backend]
-        direction TB
-
         inicio((Inicio)):::inicioClass
-        ok((201 redención)):::finClass
+        valid["Validar body, JWT y scope"]:::statementClass
+        caso["RedeemPointsUseCase: titularidad y entrada"]:::statementClass
+        titular{"¿Titular y entrada válidos?"}:::conditionalClass
+        repo["TransactionRepository.applyPoints: BEGIN y bloqueo"]:::statementClass
+        estado{"¿Cuenta activa y saldo suficiente?"}:::conditionalClass
+        guardar["INSERT REDEM y UPDATE saldo"]:::statementClass
+        commit["COMMIT"]:::statementClass
+        rollback["ROLLBACK"]:::rejectClass
+        fallo["Error de validación, autorización o dominio"]:::rejectClass
+        ok((201 Redención)):::finClass
         error((Error)):::finClass
-        valida["validate(redeemRequestSchema)"]:::statementClass
-        auth["authenticateJWT y authorizeScopes(user)"]:::statementClass
-        control["TransactionsController.redeem"]:::statementClass
-        caso["RedeemPointsUseCase"]:::statementClass
-        puntos{"¿Puntos > 0?"}:::conditionalClass
-        cuenta["getAccountIdByDocument"]:::statementClass
-        existe{"¿Cuenta existe?"}:::conditionalClass
-        saldo["AccountRepository.getBalance"]:::statementClass
-        suficiente{"¿Saldo >= puntos?"}:::conditionalClass
-        calcula["amount = points * 100; crear REDEM"]:::statementClass
-        guarda["TransactionRepository.save"]:::statementClass
-        resta["AccountRepository.subtractPoints"]:::statementClass
-        respuesta["Mapear puntosRedeemed y balance"]:::statementClass
-        rechazo["Error de validación, auth, puntos, cuenta o saldo"]:::rejectClass
     end
     subgraph BASE_DE_DATOS [Base de datos]
-        direction TB
-        db[(PostgreSQL loyalty.accounts + loyalty.transactions)]:::dbClass
+        db[(PostgreSQL)]:::dbClass
     end
-
-
-    inicio --> valida --> auth --> control --> caso --> puntos
-    puntos -->|No| rechazo --> error
-    puntos -->|Sí| cuenta --> existe
-    existe -->|No| rechazo
-    existe -->|Sí| saldo --> suficiente
-    suficiente -->|No| rechazo
-    suficiente -->|Sí| calcula --> guarda --> resta --> respuesta --> ok
-    cuenta -.-> db
-    saldo -.-> db
-    guarda -.-> db
-    resta -.-> db
+    inicio --> valid
+    valid -->|Error| fallo
+    valid -->|Correcto| caso --> titular
+    titular -->|No| fallo --> error
+    titular -->|Sí| repo --> estado
+    estado -->|No| rollback --> fallo
+    estado -->|Sí| guardar --> commit --> ok
+    guardar -->|Error| rollback
+    repo -.-> db
+    guardar -.-> db
 ```
 
 ## Detalles de implementación
 
-`RedeemPointsUseCase` depende de `ITransactionRepository` e `IAccountRepository`; no usa transacción SQL ni bloqueo explícito.
+`RedeemPointsUseCase` depende de `ITransactionRepository`; `applyPoints` usa una transacción SQL y bloqueo de fila.
 
 **Fuentes:** [ruta](../../../src/infraestructure/http/routes/v1/transactions.routes.ts), [controlador](../../../src/infraestructure/controllers/v1/transactions.controller.ts), [caso de uso](../../../src/application/use-cases/transactions/redeem-points.usecase.ts), [repositorio transaccional](../../../src/infraestructure/database/repositories/transaction.repository.ts), [repositorio de cuenta](../../../src/infraestructure/database/repositories/account.repository.ts), [esquema](../../../src/infraestructure/schemas/transaction.schema.ts).
 
@@ -167,7 +154,7 @@ flowchart TB
 
 ### Base de datos
 
-Consulta cuenta/saldo, inserta en `loyalty.transactions` y modifica `loyalty.accounts` por separado.
+Bloquea y consulta cuenta/saldo, inserta en `loyalty.transactions` y actualiza `loyalty.accounts` en una transacción SQL. La concurrencia y rollback requieren validación adicional con PostgreSQL real.
 
 ### Eventos e integraciones
 

@@ -26,13 +26,13 @@ El proyecto usa Node.js, TypeScript estricto, Express 5, Awilix, PostgreSQL (`pg
 
 ## Autenticación y errores
 
-Las rutas protegidas verifican un JWT Bearer. `JwtAuthService` acepta tokens HS256 de tipo `access`; los tokens emitidos por el login vencen en una hora y llevan el scope `user`. El middleware de scopes permite una ruta si alguno de los scopes requeridos está en el token. CORS permite los orígenes `http://localhost:3000`, `http://localhost:4002` y `https://loyalty-web-mocha.vercel.app`, con credenciales; solicitudes sin `Origin` también pasan la comprobación configurada. Los errores `DomainException` se serializan como `{ "code", "message" }` con su estado; los errores inesperados se responden como 500 `INTERNAL_SERVER_ERROR`.
+Las rutas protegidas verifican un JWT Bearer. `JwtAuthService` acepta tokens HS256 de tipo `access`; los tokens emitidos por el login vencen en una hora y llevan el scope `user`. El middleware de scopes permite una ruta si alguno de los scopes requeridos está en el token. CORS permite los orígenes `http://localhost:3000`, `http://localhost:3001`, `http://localhost:4002` y `https://loyalty-web-mocha.vercel.app`, con credenciales; solicitudes sin `Origin` también pasan la comprobación configurada. Los errores `DomainException` se serializan como `{ "code", "message" }` con su estado; los errores inesperados se responden como 500 `INTERNAL_SERVER_ERROR`.
 
 El servidor declara `bearerAuth` como seguridad global OpenAPI, mientras que las rutas públicas omiten seguridad a nivel de operación; por ello Swagger puede mostrar seguridad heredada que no coincide con los middlewares reales de registro y login.
 
 ## Persistencia e integraciones
 
-Los repositorios de usuarios, cuentas y transacciones consultan el esquema `loyalty` en PostgreSQL. Los casos de uso de acumulación y redención guardan una transacción y luego actualizan el saldo mediante consultas separadas; el flujo no abre una transacción SQL. El módulo de ejemplo `generic` consulta/guarda en la tabla `generics` en algunos casos. La consulta de Pokémon llama a la API externa PokeAPI mediante Axios, con timeout configurado en el cliente y un timeout de cuatro segundos para esa petición.
+Los repositorios de usuarios, cuentas y transacciones consultan el esquema `loyalty` en PostgreSQL. El registro inserta usuario y cuenta en una misma sentencia. Acumulación y redención usan `TransactionRepository.applyPoints`: abre una transacción, bloquea la cuenta, verifica estado y saldo cuando corresponde, inserta el historial, actualiza el saldo y confirma o revierte. Las pruebas de concurrencia y rollback con PostgreSQL real siguen pendientes. El módulo de ejemplo `generic` consulta/guarda en la tabla `generics` en algunos casos. La consulta de Pokémon llama a la API externa PokeAPI mediante Axios, con timeout configurado en el cliente y un timeout de cuatro segundos para esa petición.
 
 ## Índice de casos de uso
 
@@ -46,6 +46,8 @@ Los repositorios de usuarios, cuentas y transacciones consultan el esquema `loya
 
 ### Cuentas
 
+- [Consultar cuenta propia](use-cases/cuentas/consultar-cuenta.md)
+- [Actualizar estado de cuenta](use-cases/cuentas/actualizar-estado.md)
 - [Consultar saldo](use-cases/cuentas/consultar-saldo.md)
 
 ### Transacciones

@@ -59,7 +59,7 @@ src/server.ts crea la aplicación Express, instala JSON, CORS, alcance de Awilix
 
 Las rutas principales de usuarios, cuentas y transacciones validan solicitudes con Zod y, según la operación, exigen JWT Bearer y el scope user. El registro y el login son públicos. El JWT se firma con HS256 y vence en una hora. El módulo generic tiene middleware diferente: su listado exige uno de los scopes generic o user; crear, consultar por ID, consultar Pokémon y actualizar no instalan autenticación ni validación de ruta. No se debe interpretar la declaración global bearerAuth de OpenAPI como aplicación uniforme de seguridad efectiva.
 
-Los repositorios de lealtad consultan loyalty.users, loyalty.accounts y loyalty.transactions. GenericRepository consulta generics sin prefijo de esquema; no se documenta como parte del modelo de lealtad. Acumulación y redención guardan primero la transacción y luego actualizan el saldo mediante llamadas separadas al repositorio; los casos de uso no abren una transacción SQL.
+Los repositorios de lealtad consultan loyalty.users, loyalty.accounts y loyalty.transactions. GenericRepository consulta generics sin prefijo de esquema; no se documenta como parte del modelo de lealtad. Acumulación y redención delegan en TransactionRepository.applyPoints, que bloquea la cuenta y agrupa el historial y el saldo en una transacción SQL. La concurrencia y el rollback con PostgreSQL real siguen pendientes de verificación.
 
 El caso generic para Pokémon pasa por PokeApiAdapter y un cliente Axios; solicita https://pokeapi.co/api/v2/pokemon/:name con timeout de 4 segundos y transforma la respuesta en nombre, altura y peso.
 
