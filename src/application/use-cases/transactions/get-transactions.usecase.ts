@@ -3,6 +3,7 @@ import { ITransactionRepository } from "../../../domain/interfaces/repositories/
 import { GetTransactionsResponseDTO } from "../../dto/get-transactions.dto";
 import { DomainErrors } from "../../../domain/errors/domain-errors";
 import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { assertAccountOwner } from "../../utils/assert-account-owner";
 
 export class GetTransactionsUseCase implements IGetTransactionsUseCase {
   constructor(private readonly transactionRepository: ITransactionRepository) {}
@@ -10,12 +11,15 @@ export class GetTransactionsUseCase implements IGetTransactionsUseCase {
   async execute(
     documentType: string,
     documentNumber: string,
-    type?: string,
+    type: string | undefined,
+    authenticatedDocument: string,
   ): Promise<GetTransactionsResponseDTO> {
     if (!documentNumber) {
       const error = DomainErrors.USER_DOCUMENT_REQUIRED;
       throw new DomainException(error.code, error.message, error.statusCode);
     }
+
+    assertAccountOwner(documentNumber, authenticatedDocument);
 
     if (type && !["ACUM", "REDEM"].includes(type)) {
       const error = DomainErrors.TRANSACTION_TYPE_INVALID;

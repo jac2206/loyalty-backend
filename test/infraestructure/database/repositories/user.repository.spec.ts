@@ -18,6 +18,41 @@ describe("UserRepository", () => {
     vi.clearAllMocks();
   });
 
+  it("creates the user and zero-balance active account in one SQL statement", async () => {
+    vi.mocked(pool.query).mockResolvedValueOnce({
+      rows: [
+        {
+          document_type: "CC",
+          document_number: "123",
+          full_name: "Ada",
+          email: "ada@example.com",
+          phone: null,
+          password_hash: "hash",
+          has_pin: false,
+          status: true,
+        },
+      ],
+    } as never);
+    await repository.save(
+      new User("CC", "123", "Ada", "ada@example.com", null, "hash"),
+    );
+    const [sql, params] = vi.mocked(pool.query).mock.calls[0] as [string, unknown[]];
+    expect(sql).toContain("WITH created_user AS");
+    expect(sql).toContain("INSERT INTO loyalty.accounts");
+    expect(sql).toContain("SELECT $9, id, 0, true FROM created_user");
+    expect(params[8]).toEqual(expect.any(String));
+    expect(pool.query).toHaveBeenCalledTimes(1);
+  });
+
+  it("propagates an account insertion failure", async () => {
+    vi.mocked(pool.query).mockRejectedValueOnce(
+      new Error("account insert failed") as never,
+    );
+    await expect(
+      repository.save(new User("CC", "123", "Ada", "ada@example.com", null, "hash")),
+    ).rejects.toThrow("account insert failed");
+  });
+
   it("updates only email and full name by document number", async () => {
     vi.mocked(pool.query).mockResolvedValueOnce({
       rows: [

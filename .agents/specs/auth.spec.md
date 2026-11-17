@@ -14,6 +14,7 @@ Registrar usuarios y emitir JWT para acceder a recursos protegidos.
 3. La contraseña se almacena como hash bcrypt y nunca se devuelve.
 4. Login con email inexistente o contraseña inválida devuelve `USER_INVALID_CREDENTIALS` (401).
 5. El JWT de acceso tiene `sub` igual a `documentNumber` y scope `user`.
+6. El registro crea una cuenta de puntos activa con saldo cero en la misma sentencia que crea el usuario; conserva la respuesta existente. La verificación con PostgreSQL real está pendiente en `account.spec.md`.
 
 ## Contratos actuales
 

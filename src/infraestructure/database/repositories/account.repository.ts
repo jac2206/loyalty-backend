@@ -1,7 +1,50 @@
 import { pool } from "../../database/postgres";
-import { IAccountRepository } from "../../../domain/interfaces/repositories/account.repository.interface";
+import {
+  AccountRecord,
+  IAccountRepository,
+} from "../../../domain/interfaces/repositories/account.repository.interface";
+
+type AccountRow = {
+  id: string;
+  user_id: string;
+  points_balance: number;
+  status: boolean | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+};
+
+const mapAccount = (row: AccountRow): AccountRecord => ({
+  id: row.id,
+  userId: row.user_id,
+  pointsBalance: row.points_balance,
+  status: row.status,
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
+});
 
 export class AccountRepository implements IAccountRepository {
+  async findByDocumentNumber(documentNumber: string): Promise<AccountRecord | null> {
+    const result = await pool.query<AccountRow>(
+      `SELECT a.id, a.user_id, a.points_balance, a.status, a.created_at, a.updated_at
+       FROM loyalty.accounts a JOIN loyalty.users u ON u.id = a.user_id
+       WHERE u.document_number = $1`,
+      [documentNumber],
+    );
+    return result.rows[0] ? mapAccount(result.rows[0]) : null;
+  }
+
+  async updateStatusByDocumentNumber(
+    documentNumber: string,
+    status: boolean,
+  ): Promise<AccountRecord | null> {
+    const result = await pool.query<AccountRow>(
+      `UPDATE loyalty.accounts a SET status = $2, updated_at = CURRENT_TIMESTAMP
+       FROM loyalty.users u WHERE u.id = a.user_id AND u.document_number = $1
+       RETURNING a.id, a.user_id, a.points_balance, a.status, a.created_at, a.updated_at`,
+      [documentNumber, status],
+    );
+    return result.rows[0] ? mapAccount(result.rows[0]) : null;
+  }
   async getBalanceByDocument(
     documentType: string,
     documentNumber: string,
