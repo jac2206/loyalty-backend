@@ -28,6 +28,8 @@ import { AccumulatePointsUseCase } from "../application/use-cases/transactions/a
 import { RedeemPointsUseCase } from "../application/use-cases/transactions/redeem-points.usecase";
 import { GetAllUsersUseCase } from "../application/use-cases/users/get-all-users.usecase";
 import { UpdateUserUseCase } from "../application/use-cases/users/update-user.usecase";
+import { GetAccountUseCase } from "../application/use-cases/accounts/get-account.usecase";
+import { UpdateAccountStatusUseCase } from "../application/use-cases/accounts/update-account-status.usecase";
 
 export const container = createContainer({
   injectionMode: InjectionMode.CLASSIC,
@@ -44,6 +46,8 @@ container.register({
   registerUserUseCase: asClass(RegisterUserUseCase).scoped(),
   getMeUseCase: asClass(GetMeUseCase).scoped(),
   getBalanceUseCase: asClass(GetBalanceUseCase).scoped(),
+  getAccountUseCase: asClass(GetAccountUseCase).scoped(),
+  updateAccountStatusUseCase: asClass(UpdateAccountStatusUseCase).scoped(),
   getTransactionsUseCase: asClass(GetTransactionsUseCase).scoped(),
   accumulatePointsUseCase: asClass(AccumulatePointsUseCase).scoped(),
   redeemPointsUseCase: asClass(RedeemPointsUseCase).scoped(),

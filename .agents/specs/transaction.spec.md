@@ -1,6 +1,6 @@
 # Spec: transacciones de lealtad
 
-**Estado:** comportamiento actual documentado; atomicidad pendiente de endurecer si se requiere consistencia financiera.  
+**Estado:** cambio de seguridad y atomicidad en implementación.
 **Propietario de dominio:** Transacciones y Cuentas.
 
 ## Objetivo
@@ -15,7 +15,10 @@ Registrar acumulaciones y redenciones, actualizar saldo y consultar historial.
 4. Una cuenta inexistente devuelve `ACCOUNT_NOT_FOUND` (404).
 5. Saldo insuficiente devuelve `INSUFFICIENT_POINTS` (422).
 6. El filtro de historial solo permite `ACUM` o `REDEM`.
-7. Una operación de saldo e historial debe ser atómica cuando el requisito de consistencia financiera esté activado en una modificación futura.
+7. La comprobación de estado y saldo, la escritura del historial y la actualización de saldo son una sola transacción PostgreSQL; se bloquea la cuenta hasta completar la operación.
+8. El documento solicitado debe coincidir con el `sub` del JWT en historial, acumulación y redención; de lo contrario se responde 403 `ACCOUNT_DOCUMENT_MISMATCH` antes de acceder a datos.
+9. Las cuentas inactivas o con estado nulo rechazan acumulación y redención con 403 `ACCOUNT_INACTIVE`. La actualización de estado y las operaciones de puntos se serializan por la fila de cuenta.
+10. Si falla cualquier escritura, se revierte tanto el historial como el saldo. Redenciones simultáneas no deben producir saldo negativo.
 
 ## Contratos actuales
 
@@ -26,6 +29,7 @@ Registrar acumulaciones y redenciones, actualizar saldo y consultar historial.
 | Redimir | `POST /loyalty/v1/transactions/redeem` | 201, puntos redimidos y saldo |
 
 Todas requieren JWT y scope `user`.
+La documentación OpenAPI de acumulación y redención declara el éxito real con 201 y el esquema de respuesta correspondiente; no declara 200 como éxito para esas operaciones.
 
 ## Aceptación
 
@@ -33,3 +37,6 @@ Todas requieren JWT y scope `user`.
 - Dada una redención válida con saldo suficiente, se registra `REDEM` y el saldo disminuye.
 - Dada una redención mayor al saldo, no se persiste una transacción ni cambia el saldo.
 - Dado un tipo de filtro inválido, se devuelve 422 de validación.
+- Dado un documento diferente al del token, cada operación responde 403 sin consultar ni modificar datos.
+- Las operaciones concurrentes sobre la misma cuenta respetan el orden de bloqueo y no aplican puntos a una cuenta desactivada antes de adquirir el bloqueo.
+- Ante error al insertar historial o actualizar saldo, ninguna de las dos escrituras persiste.

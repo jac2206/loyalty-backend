@@ -15,8 +15,13 @@ import {
 import { validate } from "../../middlewares/validate.middleware";
 import { registry } from "../../../docs/registry";
 import { registerRoute } from "../../../docs/route-builder";
+import { errorResponseSchema } from "../../../schemas/error.schema";
 
 const router = Router();
+const forbiddenResponse = {
+  description: "Account is inactive or does not belong to the authenticated user",
+  content: { "application/json": { schema: errorResponseSchema } },
+};
 
 registerRoute(router, registry, {
   method: "get",
@@ -27,6 +32,7 @@ registerRoute(router, registry, {
   querySchema: transactionsQuerySchema,
   responseSchema: transactionsResponseSchema,
   isProtected: true,
+  customResponses: { 403: forbiddenResponse },
   middlewares: [
     validate({ params: transactionParamsSchema }),
     authenticateJWT,
@@ -47,7 +53,9 @@ registerRoute(router, registry, {
   tag: "Transactions",
   bodySchema: accumulateRequestSchema,
   responseSchema: accumulateResponseSchema,
+  successStatus: 201,
   isProtected: true,
+  customResponses: { 403: forbiddenResponse },
   middlewares: [
     validate({ body: accumulateRequestSchema }),
     authenticateJWT,
@@ -68,7 +76,9 @@ registerRoute(router, registry, {
   tag: "Transactions",
   bodySchema: redeemRequestSchema,
   responseSchema: redeemeResponseSchema,
+  successStatus: 201,
   isProtected: true,
+  customResponses: { 403: forbiddenResponse },
   middlewares: [
     validate({ body: redeemRequestSchema }),
     authenticateJWT,

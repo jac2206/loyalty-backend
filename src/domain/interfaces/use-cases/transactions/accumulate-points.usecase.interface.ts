@@ -4,5 +4,8 @@ import {
 } from "../../../../application/dto/accumulate-points.dto";
 
 export interface IAccumulatePointsUseCase {
-  execute(request: AccumulatePointsRequestDTO): Promise<AccumulatePointsResponseDTO>;
+  execute(
+    request: AccumulatePointsRequestDTO,
+    authenticatedDocument: string,
+  ): Promise<AccumulatePointsResponseDTO>;
 }

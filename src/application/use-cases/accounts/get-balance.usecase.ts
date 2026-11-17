@@ -3,6 +3,7 @@ import { IAccountRepository } from "../../../domain/interfaces/repositories/acco
 import { GetBalanceResponseDTO } from "../../dto/get-balance.dto";
 import { DomainErrors } from "../../../domain/errors/domain-errors";
 import { DomainException } from "../../../domain/exceptions/domain.exception";
+import { assertAccountOwner } from "../../utils/assert-account-owner";
 
 export class GetBalanceUseCase implements IGetBalanceUseCase {
   constructor(private readonly accountRepository: IAccountRepository) {}
@@ -10,7 +11,9 @@ export class GetBalanceUseCase implements IGetBalanceUseCase {
   async execute(
     documentType: string,
     documentNumber: string,
+    authenticatedDocument: string,
   ): Promise<GetBalanceResponseDTO> {
+    assertAccountOwner(documentNumber, authenticatedDocument);
     const balance = await this.accountRepository.getBalanceByDocument(
       documentType,
       documentNumber,

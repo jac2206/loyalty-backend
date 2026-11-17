@@ -26,17 +26,24 @@ export class TransactionsController {
       documentType,
       documentNumber,
       type as string,
+      req.user?.sub ?? "",
     );
     res.status(200).json(result);
   };
 
   accumulate = async (req: Request, res: Response<AccumulatePointsResponseDTO>) => {
-    const result = await this.accumulatePointsUseCase.execute(req.body);
+    const result = await this.accumulatePointsUseCase.execute(
+      req.body,
+      req.user?.sub ?? "",
+    );
     res.status(201).json(result);
   };
 
   redeem = async (req: Request, res: Response<RedeemPointsResponseDTO>) => {
-    const result = await this.redeemPointsUseCase.execute(req.body);
+    const result = await this.redeemPointsUseCase.execute(
+      req.body,
+      req.user?.sub ?? "",
+    );
     res.status(201).json(result);
   };
 }

@@ -10,7 +10,7 @@ describe("GetBalanceUseCase", () => {
     } as unknown as IAccountRepository;
 
     await expect(
-      new GetBalanceUseCase(accountRepository).execute("CC", "123"),
+      new GetBalanceUseCase(accountRepository).execute("CC", "123", "123"),
     ).resolves.toEqual({ documentType: "CC", documentNumber: "123", balance: 125 });
     expect(accountRepository.getBalanceByDocument).toHaveBeenCalledWith("CC", "123");
   });
@@ -21,7 +21,17 @@ describe("GetBalanceUseCase", () => {
     } as unknown as IAccountRepository;
 
     await expect(
-      new GetBalanceUseCase(accountRepository).execute("CC", "missing"),
+      new GetBalanceUseCase(accountRepository).execute("CC", "missing", "missing"),
     ).rejects.toMatchObject(DomainErrors.ACCOUNT_NOT_FOUND);
+  });
+
+  it("rejects a different authenticated document before querying", async () => {
+    const accountRepository = {
+      getBalanceByDocument: vi.fn(),
+    } as unknown as IAccountRepository;
+    await expect(
+      new GetBalanceUseCase(accountRepository).execute("CC", "other", "owner"),
+    ).rejects.toMatchObject(DomainErrors.ACCOUNT_DOCUMENT_MISMATCH);
+    expect(accountRepository.getBalanceByDocument).not.toHaveBeenCalled();
   });
 });
