@@ -12,6 +12,7 @@ type RouteConfig = {
   paramsSchema?: ZodObject<ZodRawShape>;
   querySchema?: ZodObject<ZodRawShape>;
   responseSchema?: ZodTypeAny;
+  successStatus?: 200 | 201;
   handler: RequestHandler;
   middlewares?: RequestHandler[];
   customResponses?: Record<number, any>;
@@ -67,6 +68,7 @@ export const registerRoute = (
     paramsSchema,
     querySchema,
     responseSchema,
+    successStatus = 200,
     handler,
     middlewares = [],
     customResponses = {},
@@ -103,7 +105,7 @@ export const registerRoute = (
     security: isProtected ? [{ bearerAuth: [] }] : undefined,
 
     responses: {
-      200: {
+      [successStatus]: {
         description: "Success",
         content: responseSchema
           ? {

@@ -26,7 +26,12 @@ describe("GetTransactionsUseCase", () => {
     } as unknown as ITransactionRepository;
 
     await expect(
-      new GetTransactionsUseCase(transactionRepository).execute("CC", "123", "ACUM"),
+      new GetTransactionsUseCase(transactionRepository).execute(
+        "CC",
+        "123",
+        "ACUM",
+        "123",
+      ),
     ).resolves.toEqual({
       transactions: [
         {
@@ -50,7 +55,12 @@ describe("GetTransactionsUseCase", () => {
     } as unknown as ITransactionRepository;
 
     await expect(
-      new GetTransactionsUseCase(transactionRepository).execute("CC", ""),
+      new GetTransactionsUseCase(transactionRepository).execute(
+        "CC",
+        "",
+        undefined,
+        "123",
+      ),
     ).rejects.toMatchObject(DomainErrors.USER_DOCUMENT_REQUIRED);
     expect(transactionRepository.findByUser).not.toHaveBeenCalled();
   });
@@ -61,8 +71,21 @@ describe("GetTransactionsUseCase", () => {
     } as unknown as ITransactionRepository;
 
     await expect(
-      new GetTransactionsUseCase(transactionRepository).execute("CC", "123", "OTHER"),
+      new GetTransactionsUseCase(transactionRepository).execute(
+        "CC",
+        "123",
+        "OTHER",
+        "123",
+      ),
     ).rejects.toMatchObject(DomainErrors.TRANSACTION_TYPE_INVALID);
     expect(transactionRepository.findByUser).not.toHaveBeenCalled();
+  });
+
+  it("rejects another user's history before querying", async () => {
+    const repository = { findByUser: vi.fn() } as unknown as ITransactionRepository;
+    await expect(
+      new GetTransactionsUseCase(repository).execute("CC", "other", undefined, "owner"),
+    ).rejects.toMatchObject(DomainErrors.ACCOUNT_DOCUMENT_MISMATCH);
+    expect(repository.findByUser).not.toHaveBeenCalled();
   });
 });

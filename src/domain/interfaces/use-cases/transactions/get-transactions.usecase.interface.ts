@@ -4,6 +4,7 @@ export interface IGetTransactionsUseCase {
   execute(
     documentType: string,
     documentNumber: string,
-    type?: string,
+    type: string | undefined,
+    authenticatedDocument: string,
   ): Promise<GetTransactionsResponseDTO>;
 }

@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { RedeemPointsUseCase } from "../../../../src/application/use-cases/transactions/redeem-points.usecase";
 import { DomainErrors } from "../../../../src/domain/errors/domain-errors";
-import { IAccountRepository } from "../../../../src/domain/interfaces/repositories/account.repository.interface";
 import { ITransactionRepository } from "../../../../src/domain/interfaces/repositories/transaction.repository.interface";
 
 describe("RedeemPointsUseCase", () => {
@@ -10,93 +9,47 @@ describe("RedeemPointsUseCase", () => {
     documentNumber: "123",
     partnerCode: "SHOP",
     points: 20,
-    reference: "redemption-1",
+    reference: "redemption",
   };
-
-  it("creates a REDEM transaction and subtracts the requested points", async () => {
-    const accountRepository = {
-      getAccountIdByDocument: vi.fn().mockResolvedValue("account-1"),
-      getBalance: vi.fn().mockResolvedValue(30),
-      subtractPoints: vi.fn().mockResolvedValue(10),
-    } as unknown as IAccountRepository;
-    const transactionRepository = {
-      save: vi.fn().mockResolvedValue(undefined),
+  it("sends redemption to the atomic port", async () => {
+    const repository = {
+      applyPoints: vi.fn().mockResolvedValue({ outcome: "success", balance: 10 }),
     } as unknown as ITransactionRepository;
-
     await expect(
-      new RedeemPointsUseCase(transactionRepository, accountRepository).execute(
-        request,
-      ),
+      new RedeemPointsUseCase(repository).execute(request, "123"),
     ).resolves.toEqual({
       message: "Points redeemed successfully",
       pointsRedeemed: 20,
       balance: 10,
     });
-    expect(transactionRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({
-        accountId: "account-1",
-        type: "REDEM",
-        points: 20,
-        amount: 2_000,
-        locationCode: null,
-      }),
+    expect(repository.applyPoints).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "REDEM", points: 20, amount: 2000 }),
     );
-    expect(accountRepository.subtractPoints).toHaveBeenCalledWith("account-1", 20);
   });
-
-  it("rejects non-positive points before interacting with ports", async () => {
-    const accountRepository = {
-      getAccountIdByDocument: vi.fn(),
-      getBalance: vi.fn(),
-      subtractPoints: vi.fn(),
-    } as unknown as IAccountRepository;
-    const transactionRepository = {
-      save: vi.fn(),
+  it.each([
+    ["not-found", DomainErrors.ACCOUNT_NOT_FOUND],
+    ["inactive", DomainErrors.ACCOUNT_INACTIVE],
+    ["insufficient", DomainErrors.INSUFFICIENT_POINTS],
+  ] as const)("maps %s", async (outcome, expected) => {
+    const repository = {
+      applyPoints: vi.fn().mockResolvedValue({ outcome }),
     } as unknown as ITransactionRepository;
-
     await expect(
-      new RedeemPointsUseCase(transactionRepository, accountRepository).execute({
-        ...request,
-        points: 0,
-      }),
+      new RedeemPointsUseCase(repository).execute(request, "123"),
+    ).rejects.toMatchObject(expected);
+  });
+  it("rejects another user's document without accessing persistence", async () => {
+    const repository = { applyPoints: vi.fn() } as unknown as ITransactionRepository;
+    await expect(
+      new RedeemPointsUseCase(repository).execute(request, "other"),
+    ).rejects.toMatchObject(DomainErrors.ACCOUNT_DOCUMENT_MISMATCH);
+    expect(repository.applyPoints).not.toHaveBeenCalled();
+  });
+  it("rejects non-positive points", async () => {
+    const repository = { applyPoints: vi.fn() } as unknown as ITransactionRepository;
+    await expect(
+      new RedeemPointsUseCase(repository).execute({ ...request, points: 0 }, "123"),
     ).rejects.toMatchObject(DomainErrors.TRANSACTION_POINTS_INVALID);
-    expect(accountRepository.getAccountIdByDocument).not.toHaveBeenCalled();
-  });
-
-  it("rejects a missing account without saving a transaction", async () => {
-    const accountRepository = {
-      getAccountIdByDocument: vi.fn().mockResolvedValue(null),
-      getBalance: vi.fn(),
-      subtractPoints: vi.fn(),
-    } as unknown as IAccountRepository;
-    const transactionRepository = {
-      save: vi.fn(),
-    } as unknown as ITransactionRepository;
-
-    await expect(
-      new RedeemPointsUseCase(transactionRepository, accountRepository).execute(
-        request,
-      ),
-    ).rejects.toMatchObject(DomainErrors.ACCOUNT_NOT_FOUND);
-    expect(transactionRepository.save).not.toHaveBeenCalled();
-  });
-
-  it("rejects insufficient balance without saving a transaction or subtracting points", async () => {
-    const accountRepository = {
-      getAccountIdByDocument: vi.fn().mockResolvedValue("account-1"),
-      getBalance: vi.fn().mockResolvedValue(19),
-      subtractPoints: vi.fn(),
-    } as unknown as IAccountRepository;
-    const transactionRepository = {
-      save: vi.fn(),
-    } as unknown as ITransactionRepository;
-
-    await expect(
-      new RedeemPointsUseCase(transactionRepository, accountRepository).execute(
-        request,
-      ),
-    ).rejects.toMatchObject(DomainErrors.INSUFFICIENT_POINTS);
-    expect(transactionRepository.save).not.toHaveBeenCalled();
-    expect(accountRepository.subtractPoints).not.toHaveBeenCalled();
+    expect(repository.applyPoints).not.toHaveBeenCalled();
   });
 });
