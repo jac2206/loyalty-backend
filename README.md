@@ -164,6 +164,8 @@ Las rutas de negocio usan el prefijo `/loyalty/v1`.
 | `GET` | `/loyalty/v1/users/me` | JWT | Consultar perfil propio. |
 | `GET` | `/loyalty/v1/users` | JWT | Listar usuarios. |
 | `PATCH` | `/loyalty/v1/users/:documentNumber` | JWT | Actualizar perfil. |
+| `GET` | `/loyalty/v1/accounts/me` | JWT | Consultar cuenta propia. |
+| `PATCH` | `/loyalty/v1/accounts/me/status` | JWT | Activar o desactivar la cuenta propia. |
 | `GET` | `/loyalty/v1/accounts/balance/:documentType/:documentNumber` | JWT | Consultar saldo. |
 | `POST` | `/loyalty/v1/transactions/accumulate` | JWT | Acumular puntos. |
 | `POST` | `/loyalty/v1/transactions/redeem` | JWT | Redimir puntos. |
@@ -171,6 +173,8 @@ Las rutas de negocio usan el prefijo `/loyalty/v1`.
 | `GET` | `/docs` | Público | Interfaz Swagger/OpenAPI. |
 
 Las rutas protegidas requieren `Authorization: Bearer <token>` y scope `user`. Registro y login son públicos. `generic` cuenta con rutas adicionales.
+
+El registro crea una cuenta activa con saldo cero. Las consultas por documento y las transacciones de puntos comprueban que el número de documento coincida con el `sub` del JWT. La acumulación y redención requieren una cuenta con `status = true`; `false` o `null` se tratan como inactivos. Para usuarios registrados antes de este flujo sin cuenta, se requiere un proceso de base de datos separado que aún no está verificado.
 
 # 15. Principios aplicados
 

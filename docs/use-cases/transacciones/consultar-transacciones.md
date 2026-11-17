@@ -21,7 +21,7 @@ Lista las transacciones de un usuario por documento y permite filtrar por tipo `
 ## Precondiciones y prerrequisitos
 
 - El parámetro `documentType` pertenece al enum y el JWT es válido con scope `user`.
-- El código no exige que el documento consultado coincida con `sub` ni requiere que exista usuario para devolver la lista.
+- El documento consultado debe coincidir con `sub`; no se requiere que exista usuario para devolver la lista.
 
 ## Parámetros de entrada
 
@@ -54,7 +54,7 @@ No aplica.
 
 1. `validate` comprueba los parámetros de ruta; luego se autentica JWT y scope.
 2. `TransactionsController.getTransactions` extrae documento y query `type`.
-3. `GetTransactionsUseCase` rechaza documento vacío con `USER_DOCUMENT_REQUIRED`.
+3. `GetTransactionsUseCase` rechaza documento vacío y verifica que coincida con `sub`.
 4. Si `type` está presente y no es `ACUM` o `REDEM`, rechaza con `TRANSACTION_TYPE_INVALID`.
 5. El caso de uso llama `TransactionRepository.findByUser`.
 6. El repositorio consulta por tipo/número documental, agrega filtro de tipo cuando fue suministrado y mapea filas a `Transaction`.
@@ -89,7 +89,7 @@ El identificador de ejemplo ilustra la forma; el formato y valores dependen de l
 | --- | --- | --- |
 | 400 | `USER_DOCUMENT_REQUIRED` | Número de documento vacío. |
 | 401 | `UNAUTHORIZED` / `INVALID_TOKEN` | Token inválido o scope insuficiente. |
-| 403 | `FORBIDDEN` | Token sin scopes. |
+| 403 | `FORBIDDEN` / `ACCOUNT_DOCUMENT_MISMATCH` | Token sin scopes o documento distinto de `sub`. |
 | 422 | `TRANSACTION_TYPE_INVALID` | `type` no es `ACUM` ni `REDEM`. |
 | 422 | `VALIDATION_ERROR` | `documentType` fuera del enum. |
 | 500 | `INTERNAL_SERVER_ERROR` | Error inesperado. |
@@ -99,7 +99,7 @@ El identificador de ejemplo ilustra la forma; el formato y valores dependen de l
 1. Sin filtro, devuelve cualquier tipo de transacción asociado al documento.
 2. Con filtro, el SQL añade `AND t.type = $3`.
 3. No existe error de usuario no encontrado; el resultado puede ser lista vacía.
-4. El scope no vincula la consulta al documento `sub`.
+4. El caso de uso compara el documento consultado con `sub`.
 
 ## Excepciones
 
@@ -127,10 +127,11 @@ flowchart TB
         controller["TransactionsController.getTransactions"]:::statementClass
         caso["GetTransactionsUseCase"]:::statementClass
         doc{"¿Documento presente?"}:::conditionalClass
+        titular{"¿Documento coincide con sub?"}:::conditionalClass
         tipo{"¿Tipo omitido o válido?"}:::conditionalClass
         consulta["TransactionRepository.findByUser"]:::statementClass
         mapea["Mapear filas a transactions DTO"]:::statementClass
-        rechazo["USER_DOCUMENT_REQUIRED, TRANSACTION_TYPE_INVALID o auth error"]:::rejectClass
+        rechazo["Error de documento, titularidad, tipo o autenticación"]:::rejectClass
     end
     subgraph BASE_DE_DATOS [Base de datos]
         direction TB
@@ -140,7 +141,9 @@ flowchart TB
 
     inicio --> params --> auth --> controller --> caso --> doc
     doc -->|No| rechazo --> error
-    doc -->|Sí| tipo
+    doc -->|Sí| titular
+    titular -->|No| rechazo
+    titular -->|Sí| tipo
     tipo -->|No| rechazo
     tipo -->|Sí| consulta --> mapea --> ok
     consulta -.-> db

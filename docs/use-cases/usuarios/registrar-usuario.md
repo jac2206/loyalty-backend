@@ -5,7 +5,7 @@
 
 ## Descripción
 
-Registra un usuario, verifica la política de contraseña, comprueba que el correo no esté ocupado, almacena la contraseña con bcrypt y devuelve datos públicos.
+Registra un usuario y crea su cuenta activa con saldo cero; valida contraseña y correo, almacena el hash bcrypt y devuelve datos públicos.
 
 ## Detalles del endpoint
 
@@ -76,7 +76,7 @@ No aplica.
 3. El caso de uso rechaza contraseñas que no cumplen la expresión regular de política.
 4. Consulta `IUserRepository.findByEmail`; si el correo ya existe, lanza `USER_EMAIL_ALREADY_EXISTS`.
 5. Calcula el hash con `bcrypt.hash(password, 10)` y construye una entidad `User`.
-6. `UserRepository.save` inserta en `loyalty.users` y devuelve el usuario mapeado.
+6. `UserRepository.save` inserta el usuario y su cuenta activa de saldo cero en una misma sentencia SQL con CTE; devuelve el usuario mapeado.
 7. El caso de uso construye la respuesta pública; el controlador responde 201.
 
 ## Respuestas
@@ -139,7 +139,7 @@ flowchart TB
         correo["IUserRepository.findByEmail"]:::statementClass
         existe{"¿Correo existente?"}:::conditionalClass
         hash["bcrypt.hash(..., 10) y crear User"]:::statementClass
-        guarda["UserRepository.save: INSERT loyalty.users"]:::statementClass
+        guarda["UserRepository.save: insertar usuario y cuenta en una sentencia"]:::statementClass
         respuesta["Mapear respuesta pública"]:::statementClass
         rechazo["Responder error de validación, contraseña o correo"]:::rejectClass
     end
@@ -170,7 +170,7 @@ flowchart TB
 
 ### Base de datos
 
-Inserta en `loyalty.users` los campos de documento, nombre, correo, teléfono, hash, `has_pin` y `status`. No hay transacción SQL para esta única inserción.
+Una sentencia SQL con CTE inserta en `loyalty.users` y `loyalty.accounts`, con UUID generado en aplicación, saldo cero y estado activo. Un fallo de la sentencia impide completar las inserciones. La compatibilidad con el esquema desplegado y el comportamiento en PostgreSQL real no se han verificado aquí.
 
 ### Eventos e integraciones
 

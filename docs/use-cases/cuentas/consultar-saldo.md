@@ -38,12 +38,12 @@ Busca la cuenta del usuario por tipo y número de documento y devuelve su saldo 
 | documentType | string | Enum: `CC`, `CE`, `NIT` o `PT`. |
 | documentNumber | string | Número de documento; Zod no impone longitud mínima. |
 
-No hay query ni body. El código no compara el documento consultado con `sub` del token.
+No hay query ni body. El caso de uso compara `documentNumber` con `sub` del JWT y rechaza un documento ajeno.
 
 ## Flujo principal
 
 1. La ruta valida ambos parámetros, autentica JWT y exige scope `user`.
-2. `AccountsController.getBalance` entrega los parámetros a `GetBalanceUseCase`.
+2. `AccountsController.getBalance` entrega los parámetros y el `sub` a `GetBalanceUseCase`, que comprueba la titularidad antes de consultar.
 3. El caso de uso llama `IAccountRepository.getBalanceByDocument`.
 4. El repositorio consulta saldo en `loyalty.accounts` con join a `loyalty.users`.
 5. Si no hay filas, el caso de uso lanza `ACCOUNT_NOT_FOUND`; si hay saldo, responde documento/tipo/saldo con HTTP 200.
@@ -65,7 +65,7 @@ No hay query ni body. El código no compara el documento consultado con `sub` de
 | HTTP | Código | Causa |
 | --- | --- | --- |
 | 401 | `UNAUTHORIZED` / `INVALID_TOKEN` | Token ausente o inválido, o sin scope requerido (respuesta del middleware). |
-| 403 | `FORBIDDEN` | El token no tiene scopes. |
+| 403 | `FORBIDDEN` / `ACCOUNT_DOCUMENT_MISMATCH` | Token sin scopes o documento distinto de `sub`. |
 | 404 | `ACCOUNT_NOT_FOUND` | No hay cuenta para la combinación de documento. |
 | 422 | `VALIDATION_ERROR` | Tipo documental fuera del enum. |
 | 500 | `INTERNAL_SERVER_ERROR` | Error inesperado. |
@@ -73,7 +73,7 @@ No hay query ni body. El código no compara el documento consultado con `sub` de
 ## Reglas específicas
 
 1. El tipo documental se limita a cuatro valores en la capa HTTP.
-2. No se aplica autorización por coincidencia entre documento y `sub`; basta el scope.
+2. El documento debe coincidir con `sub` del token.
 3. La ausencia de cuenta se comunica como `ACCOUNT_NOT_FOUND`.
 
 ## Excepciones
@@ -102,10 +102,11 @@ flowchart TB
         valido{"¿Parámetros y acceso válidos?"}:::conditionalClass
         controlador["AccountsController.getBalance"]:::statementClass
         caso["GetBalanceUseCase"]:::statementClass
+        titular{"¿Documento coincide con sub?"}:::conditionalClass
         consulta["AccountRepository.getBalanceByDocument"]:::statementClass
         existe{"¿Cuenta encontrada?"}:::conditionalClass
         respuesta["Mapear documentType, documentNumber, balance"]:::statementClass
-        rechazo["VALIDATION_ERROR, auth error o ACCOUNT_NOT_FOUND"]:::rejectClass
+        rechazo["Error de validación, titularidad, autenticación o ACCOUNT_NOT_FOUND"]:::rejectClass
     end
     subgraph BASE_DE_DATOS [Base de datos]
         direction TB
@@ -115,7 +116,9 @@ flowchart TB
 
     inicio --> valida --> auth --> valido
     valido -->|No| rechazo --> error
-    valido -->|Sí| controlador --> caso --> consulta --> existe
+    valido -->|Sí| controlador --> caso --> titular
+    titular -->|No| rechazo
+    titular -->|Sí| consulta --> existe
     existe -->|No| rechazo
     existe -->|Sí| respuesta --> ok
     consulta -.-> db
